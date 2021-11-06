@@ -1,45 +1,28 @@
+import * as eva from "@eva-design/eva";
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { ApplicationProvider, IconRegistry } from "@ui-kitten/components";
+import { EvaIconsPack } from "@ui-kitten/eva-icons";
 import { StatusBar } from "expo-status-bar";
 import React from "react";
-import * as eva from "@eva-design/eva";
-import {
-  ApplicationProvider,
-  Layout,
-  Text,
-  List,
-  ListItem,
-} from "@ui-kitten/components";
-import { StyleSheet } from "react-native";
+import DetailsScreen from "./components/DetailsScreen";
+import HomeScreen from "./components/HomeScreen";
 
-const data = new Array(8).fill({
-  title: "Item",
-});
+const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
-    <ApplicationProvider {...eva} theme={eva.light}>
-      <HomeScreen />
-      <ListSimpleUsageShowcase />
+    <React.Fragment>
       <StatusBar style="auto" />
-    </ApplicationProvider>
+      <IconRegistry icons={EvaIconsPack} />
+      <ApplicationProvider {...eva} theme={{ ...eva.light }}>
+        <NavigationContainer>
+          <Stack.Navigator initialRouteName="Home">
+            <Stack.Screen name="Home" component={HomeScreen} />
+            <Stack.Screen name="Details" component={DetailsScreen} />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </ApplicationProvider>
+    </React.Fragment>
   );
 }
-
-const HomeScreen = () => (
-  <Layout style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-    <Text category="h1">HOME</Text>
-  </Layout>
-);
-
-export const ListSimpleUsageShowcase = () => {
-  const renderItem = ({ item, index }) => (
-    <ListItem title={`${item.title} ${index + 1}`} />
-  );
-
-  return <List style={styles.container} data={data} renderItem={renderItem} />;
-};
-
-const styles = StyleSheet.create({
-  container: {
-    maxHeight: 180,
-  },
-});
