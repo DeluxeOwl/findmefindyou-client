@@ -7,6 +7,7 @@ import { StatusBar } from "expo-status-bar";
 import React from "react";
 import MapScreen from "./components/MapScreen";
 import HomeScreen from "./components/HomeScreen";
+import { navigationRef } from "./util/RootNavigation";
 
 const Stack = createNativeStackNavigator();
 
@@ -16,7 +17,7 @@ export default function App() {
       <StatusBar style="auto" />
       <IconRegistry icons={EvaIconsPack} />
       <ApplicationProvider {...eva} theme={{ ...eva.light }}>
-        <NavigationContainer>
+        <NavigationContainer ref={navigationRef}>
           <Stack.Navigator initialRouteName="Home">
             <Stack.Screen
               name="Home"

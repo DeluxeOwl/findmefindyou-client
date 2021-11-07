@@ -1,14 +1,8 @@
-import {
-  Button,
-  Icon,
-  Layout,
-  List,
-  ListItem,
-  Avatar,
-} from "@ui-kitten/components";
+import { Layout, List } from "@ui-kitten/components";
 import React from "react";
 import { StyleSheet } from "react-native";
 import UserItem from "./UserItem";
+
 // Mock data
 // TODO: hold it in a global state so
 // you can update and re-render when you delete someone
