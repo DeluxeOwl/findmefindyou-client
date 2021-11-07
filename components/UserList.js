@@ -2,18 +2,11 @@ import { Layout, List } from "@ui-kitten/components";
 import React from "react";
 import { StyleSheet } from "react-native";
 import UserItem from "./UserItem";
-
-// Mock data
-// TODO: hold it in a global state so
-// you can update and re-render when you delete someone
-// also, periodically fetch it
-const data = new Array(24).fill({
-  title: "User",
-  description: "Last seen",
-});
-// end Mock Data
+import { userStore } from "../stores/userStore";
 
 export default function UserList() {
+  const data = userStore((s) => s.data);
+
   return (
     <Layout>
       <List style={styles.container} data={data} renderItem={UserItem} />
