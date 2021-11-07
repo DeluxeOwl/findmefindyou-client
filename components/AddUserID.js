@@ -8,17 +8,15 @@ import {
 } from "@ui-kitten/components";
 import React from "react";
 import { StyleSheet } from "react-native";
-const useInputState = (initialValue = "") => {
-  const [value, setValue] = React.useState(initialValue);
-  return { value, onChangeText: setValue };
-};
 
 export default function AddUserID() {
-  const primaryInputState = useInputState();
+  // The value of the user id
+  const [value, setValue] = React.useState("");
+  // State of the modal
   const [visible, setVisible] = React.useState(false);
 
   const handleSubmit = () => {
-    console.warn(primaryInputState.value);
+    console.warn(value);
   };
 
   return (
@@ -38,7 +36,10 @@ export default function AddUserID() {
         visible={visible}
         backdropStyle={styles.backdrop}
         style={{ width: "80%" }}
-        onBackdropPress={() => setVisible(false)}
+        onBackdropPress={() => {
+          setVisible(false);
+          setValue("");
+        }}
       >
         <Card disabled={true}>
           <Input
@@ -46,7 +47,8 @@ export default function AddUserID() {
             status="primary"
             placeholder="User id ..."
             label="Add a friend by entering their id"
-            {...primaryInputState}
+            value={value}
+            onChangeText={setValue}
           />
 
           <Button
@@ -61,7 +63,10 @@ export default function AddUserID() {
             style={styles.button}
             appearance="outline"
             status="danger"
-            onPress={() => setVisible(false)}
+            onPress={() => {
+              setVisible(false);
+              setValue("");
+            }}
           >
             Dismiss
           </Button>
