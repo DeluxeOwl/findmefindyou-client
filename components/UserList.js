@@ -18,19 +18,17 @@ const isOnline = true;
 // end Mock Data
 
 const renderItemAccessory = (props) => (
-  <Button
-    size="small"
-    accessoryLeft={
-      isOnline ? (
-        <Icon name="checkmark-circle-2-outline" fill="green" stroke="green" />
-      ) : (
+  <React.Fragment>
+    <Button
+      size="small"
+      accessoryRight={
         <Icon name="close-circle-outline" fill="red" stroke="red" />
-      )
-    }
-    status="basic"
-  >
-    View map
-  </Button>
+      }
+      status="basic"
+    >
+      Delete
+    </Button>
+  </React.Fragment>
 );
 // const renderItemIcon = (props) => <Icon {...props} name="person" />;
 const renderItemIcon = (props) => (
@@ -50,6 +48,9 @@ const renderItem = ({ item, index }) => (
     )} hours ago.`}
     accessoryLeft={renderItemIcon}
     accessoryRight={renderItemAccessory}
+    onPress={() => {
+      console.warn(`Pressed ${item.title} ${index + 1}`);
+    }}
   />
 );
 export default function UserList() {
