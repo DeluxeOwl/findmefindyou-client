@@ -1,13 +1,7 @@
-import {
-  IndexPath,
-  Layout,
-  Select,
-  SelectItem,
-  Text,
-  Button,
-} from "@ui-kitten/components";
+import { IndexPath, Layout, Select, SelectItem } from "@ui-kitten/components";
 import React from "react";
 import AddUserID from "./AddUserID";
+import SendDataToggle from "./SendDataToggle";
 import UserList from "./UserList";
 
 export default function HomeScreen({ navigation }) {
@@ -30,12 +24,11 @@ export default function HomeScreen({ navigation }) {
           <SelectItem title="Doesn't go anywhere" />
           <SelectItem title="Go to details" />
         </Select>
-      </Layout>
-      <Layout style={{ flex: 5 }} level="1">
+
         <UserList />
-      </Layout>
-      <Layout style={{ flex: 2 }} level="1">
         <AddUserID />
+
+        <SendDataToggle />
       </Layout>
     </React.Fragment>
   );

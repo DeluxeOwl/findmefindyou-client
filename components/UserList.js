@@ -1,4 +1,4 @@
-import { Button, Icon, List, ListItem } from "@ui-kitten/components";
+import { Button, Icon, Layout, List, ListItem } from "@ui-kitten/components";
 import React from "react";
 import { StyleSheet } from "react-native";
 // Mock data
@@ -8,6 +8,7 @@ const data = new Array(24).fill({
 });
 
 const isOnline = true;
+// end Mock Data
 
 const renderItemAccessory = (props) => (
   <Button
@@ -36,7 +37,11 @@ const renderItem = ({ item, index }) => (
   />
 );
 export default function UserList() {
-  return <List style={styles.container} data={data} renderItem={renderItem} />;
+  return (
+    <Layout>
+      <List style={styles.container} data={data} renderItem={renderItem} />
+    </Layout>
+  );
 }
 const styles = StyleSheet.create({
   container: {

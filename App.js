@@ -21,7 +21,9 @@ export default function App() {
             <Stack.Screen
               name="Home"
               component={HomeScreen}
-              options={{ headerTitle: "Welcome back" }}
+              options={{
+                headerTitle: "id: virtuous-defender-onboard",
+              }}
             />
             <Stack.Screen name="Details" component={DetailsScreen} />
           </Stack.Navigator>
