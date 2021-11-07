@@ -9,7 +9,7 @@ export default function HomeScreen({ navigation }) {
 
   React.useEffect(() => {
     if (selectedIndex.row === 1) {
-      navigation.navigate("Details");
+      navigation.navigate("Map");
     }
   }, [selectedIndex]);
 
@@ -22,7 +22,7 @@ export default function HomeScreen({ navigation }) {
           value="Go to ..."
         >
           <SelectItem title="Doesn't go anywhere" />
-          <SelectItem title="Go to details" />
+          <SelectItem title="Go to Map" />
         </Select>
 
         <UserList />

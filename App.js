@@ -5,7 +5,7 @@ import { ApplicationProvider, IconRegistry } from "@ui-kitten/components";
 import { EvaIconsPack } from "@ui-kitten/eva-icons";
 import { StatusBar } from "expo-status-bar";
 import React from "react";
-import DetailsScreen from "./components/DetailsScreen";
+import MapScreen from "./components/MapScreen";
 import HomeScreen from "./components/HomeScreen";
 
 const Stack = createNativeStackNavigator();
@@ -25,7 +25,7 @@ export default function App() {
                 headerTitle: "id: virtuous-defender-onboard",
               }}
             />
-            <Stack.Screen name="Details" component={DetailsScreen} />
+            <Stack.Screen name="Map" component={MapScreen} />
           </Stack.Navigator>
         </NavigationContainer>
       </ApplicationProvider>
