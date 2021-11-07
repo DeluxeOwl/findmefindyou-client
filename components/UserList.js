@@ -1,4 +1,11 @@
-import { Button, Icon, Layout, List, ListItem } from "@ui-kitten/components";
+import {
+  Button,
+  Icon,
+  Layout,
+  List,
+  ListItem,
+  Avatar,
+} from "@ui-kitten/components";
 import React from "react";
 import { StyleSheet } from "react-native";
 // Mock data
@@ -25,7 +32,16 @@ const renderItemAccessory = (props) => (
     View map
   </Button>
 );
-const renderItemIcon = (props) => <Icon {...props} name="person" />;
+// const renderItemIcon = (props) => <Icon {...props} name="person" />;
+const renderItemIcon = (props) => (
+  <Avatar
+    style={{ margin: 2 }}
+    size="small"
+    source={{
+      uri: "https://akveo.github.io/react-native-ui-kitten/docs/assets/playground-build/static/media/icon.a78e4b51.png",
+    }}
+  />
+);
 const renderItem = ({ item, index }) => (
   <ListItem
     title={`${item.title} ${index + 1}`}
@@ -46,5 +62,6 @@ export default function UserList() {
 const styles = StyleSheet.create({
   container: {
     maxHeight: 192 * 3,
+    margin: 2,
   },
 });
