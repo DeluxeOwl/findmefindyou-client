@@ -1,7 +1,10 @@
-import { Avatar, Button, Icon, Text, Card, Modal } from "@ui-kitten/components";
+import { Avatar, Button, Card, Icon, Modal, Text } from "@ui-kitten/components";
+import { manipulateAsync } from "expo-image-manipulator";
+import * as ImagePicker from "expo-image-picker";
 import React from "react";
-import { StyleSheet, View, Pressable } from "react-native";
+import { Platform, Pressable, StyleSheet, View } from "react-native";
 import * as RootNavigation from "../util/RootNavigation";
+import showToast from "../util/showToast";
 export default function BottomProfile({
   avatarUri,
   name,
@@ -10,10 +13,67 @@ export default function BottomProfile({
 }) {
   // State of the modal for image upload
   const [visible, setVisible] = React.useState(false);
+  const [image, setImage] = React.useState(null);
   // We're using a reference to the react navigator to avoid
   // some hook errors
   const handleNav = () => {
     RootNavigation.navigate("Notifications");
+  };
+
+  // Asks for permission to use the camera
+  const handleAvatarClick = () => {
+    setVisible(true);
+    (async () => {
+      if (Platform.OS !== "web") {
+        const { status } =
+          await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (status !== "granted") {
+          setVisible(false);
+          showToast({
+            type: "error",
+            topText: "Error",
+            bottomText:
+              "Sorry, we need camera roll permissions to make this work!",
+          });
+        }
+      }
+    })();
+  };
+  // TODO: consider encoding it as base64
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [3, 3],
+      quality: 0,
+    });
+
+    if (!result.cancelled) {
+      try {
+        const manipResult = await manipulateAsync(
+          result.uri,
+          [{ resize: { width: 100, height: 100 } }],
+          { compress: 1 }
+        );
+        setImage(manipResult.uri);
+
+        showToast({
+          type: "success",
+          topText: "Success",
+          bottomText: "Image uploaded successfully!",
+        });
+
+        console.log(manipResult);
+      } catch (error) {
+        showToast({
+          type: "error",
+          topText: "Error",
+          bottomText: `${error}`,
+        });
+      }
+    }
+
+    setVisible(false);
   };
   return (
     <React.Fragment>
@@ -31,13 +91,14 @@ export default function BottomProfile({
             appearance="outline"
             status="primary"
             accessoryLeft={<Icon name="cloud-upload-outline" />}
+            onPress={pickImage}
           >
             Upload image
           </Button>
         </Card>
       </Modal>
       <View style={styles.activityContainer}>
-        <Pressable onPress={() => setVisible(true)}>
+        <Pressable onPress={handleAvatarClick}>
           <Avatar
             source={{
               uri: avatarUri,
