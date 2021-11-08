@@ -8,6 +8,7 @@ import {
 } from "@ui-kitten/components";
 import React from "react";
 import { StyleSheet } from "react-native";
+import showToast from "../util/showToast";
 
 export default function AddUserID() {
   // The value of the user id
@@ -16,7 +17,11 @@ export default function AddUserID() {
   const [visible, setVisible] = React.useState(false);
 
   const handleSubmit = () => {
-    console.warn(value);
+    showToast({
+      topText: "Info",
+      type: "info",
+      bottomText: `Request sent to ${value}`,
+    });
   };
 
   return (

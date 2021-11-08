@@ -1,12 +1,22 @@
 import React from "react";
 import { Icon, Button } from "@ui-kitten/components";
+import showToast from "../util/showToast";
 
+// TODO: add more parameters, such as username
 export default function NotificationAcceptDeleteButtons({ requestID }) {
   const handleAccept = () => {
-    console.warn(`Accepted from id ${requestID}`);
+    showToast({
+      topText: "Success",
+      bottomText: `Accepted request from User ${requestID + 1}`,
+      type: "success",
+    });
   };
   const handleDecline = () => {
-    console.warn(`Declined from id ${requestID}`);
+    showToast({
+      topText: "Declined",
+      bottomText: `Declined request from User ${requestID + 1}`,
+      type: "error",
+    });
   };
 
   return (

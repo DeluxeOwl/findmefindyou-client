@@ -9,6 +9,8 @@ import MapScreen from "./components/MapScreen";
 import HomeScreen from "./components/HomeScreen";
 import { navigationRef } from "./util/RootNavigation";
 import NotificationScreen from "./components/NotificationScreen";
+import Toast from "react-native-toast-message";
+import toastConfig from "./util/toastConfig";
 
 const Stack = createNativeStackNavigator();
 
@@ -32,6 +34,12 @@ export default function App() {
           </Stack.Navigator>
         </NavigationContainer>
       </ApplicationProvider>
+      <Toast
+        autoHide={true}
+        visibilityTime={2500}
+        topOffset={80}
+        config={toastConfig}
+      />
     </React.Fragment>
   );
 }

@@ -1,12 +1,19 @@
 import { Button, Icon, Modal, Card, Text } from "@ui-kitten/components";
 import React from "react";
 import { StyleSheet } from "react-native";
+
+import showToast from "../util/showToast";
+// TODO: add more parameters, such as username
 export default function UserDeleteButton({ userID }) {
   // State of the modal
   const [visible, setVisible] = React.useState(false);
 
   const handleDelete = () => {
-    console.warn(`Deleted user is ${userID}`);
+    showToast({
+      topText: "Deleted",
+      bottomText: `Deleted User ${userID + 1}`,
+      type: "error",
+    });
     setVisible(false);
   };
 
