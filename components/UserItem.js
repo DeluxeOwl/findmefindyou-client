@@ -15,7 +15,7 @@ export default function UserItem({ item, index }) {
       description={`${item.description} ${Math.floor(
         Math.random() * 14 + 1
       )} hours ago.`}
-      accessoryLeft={UserIcon}
+      accessoryLeft={<UserIcon uri={item.uri} />}
       accessoryRight={<UserDeleteButton userID={`${index + 1}`} />}
       onPress={handleNav}
     />

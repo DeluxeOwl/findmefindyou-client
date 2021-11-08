@@ -26,6 +26,7 @@ const styles = StyleSheet.create({
   textWarn: {
     marginHorizontal: 1,
     marginTop: 20,
+    marginHorizontal: "auto",
     textAlign: "center",
     backgroundColor: "red",
     color: "white",
