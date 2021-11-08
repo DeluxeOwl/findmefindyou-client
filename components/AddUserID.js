@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
   containerAdd: {
     flex: 1,
     alignItems: "center",
-    marginTop: "5%",
+    marginVertical: "5%",
   },
   backdrop: {
     backgroundColor: "rgba(0, 0, 0, 0.5)",

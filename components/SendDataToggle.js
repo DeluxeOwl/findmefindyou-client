@@ -28,6 +28,6 @@ export default function SendDataToggle() {
 
 const styles = StyleSheet.create({
   toggle: {
-    margin: "10%",
+    marginVertical: "5%",
   },
 });
