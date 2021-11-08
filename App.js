@@ -8,6 +8,7 @@ import React from "react";
 import MapScreen from "./components/MapScreen";
 import HomeScreen from "./components/HomeScreen";
 import { navigationRef } from "./util/RootNavigation";
+import NotificationScreen from "./components/NotificationScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -27,6 +28,7 @@ export default function App() {
               }}
             />
             <Stack.Screen name="Map" component={MapScreen} />
+            <Stack.Screen name="Notifications" component={NotificationScreen} />
           </Stack.Navigator>
         </NavigationContainer>
       </ApplicationProvider>

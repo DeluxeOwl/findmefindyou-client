@@ -1,13 +1,16 @@
 import { Avatar, Button, Icon, Text } from "@ui-kitten/components";
 import React from "react";
 import { StyleSheet, View, Pressable } from "react-native";
-
+import * as RootNavigation from "../util/RootNavigation";
 export default function BottomProfile({
   avatarUri,
   name,
   status,
   notifNumber,
 }) {
+  const handleNav = () => {
+    RootNavigation.navigate("Notifications");
+  };
   return (
     <View style={styles.activityContainer}>
       <Pressable onPress={() => console.warn("Pressed own avatar")}>
@@ -34,6 +37,7 @@ export default function BottomProfile({
             name="bell-outline"
           />
         }
+        onPress={handleNav}
       >
         {notifNumber === 0 ? "" : `${notifNumber} new`}
       </Button>
