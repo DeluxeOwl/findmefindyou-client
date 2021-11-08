@@ -17,11 +17,21 @@ export default function AddUserID() {
   const [visible, setVisible] = React.useState(false);
 
   const handleSubmit = () => {
-    showToast({
-      topText: "Info",
-      type: "info",
-      bottomText: `Request sent to ${value}`,
-    });
+    if (value.length < 10) {
+      showToast({
+        topText: "Error",
+        type: "error",
+        bottomText: `User id is too short`,
+      });
+    } else {
+      showToast({
+        topText: "Info",
+        type: "info",
+        bottomText: `Request sent to ${value}`,
+      });
+      setVisible(false);
+      setValue("");
+    }
   };
 
   return (
