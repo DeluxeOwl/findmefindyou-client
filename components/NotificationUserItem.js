@@ -1,5 +1,6 @@
 import { ListItem } from "@ui-kitten/components";
 import React from "react";
+import NotificationAcceptDeleteButtons from "./NotificationAcceptDeleteButtons";
 import UserIcon from "./UserIcon";
 
 export default function NotificationItem({ item, index }) {
@@ -10,6 +11,9 @@ export default function NotificationItem({ item, index }) {
         Math.random() * 14 + 1
       )} hours ago.`}
       accessoryLeft={<UserIcon uri={item.uri} />}
+      accessoryRight={
+        <NotificationAcceptDeleteButtons requestID={`${index + 1}`} />
+      }
     />
   );
 }

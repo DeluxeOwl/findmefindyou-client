@@ -7,7 +7,7 @@ import create from "zustand";
 const notificationStore = create((set) => ({
   data: new Array(16).fill({
     title: "User",
-    description: "Sent ",
+    description: "Sent",
     uri: "https://akveo.github.io/react-native-ui-kitten/docs/assets/playground-build/static/media/icon.a78e4b51.png",
   }),
 }));
