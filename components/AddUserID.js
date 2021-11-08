@@ -24,7 +24,7 @@ export default function AddUserID() {
       <Layout style={styles.containerAdd}>
         <Button
           appearance="filled"
-          status="success"
+          status="primary"
           style={styles.buttonAdd}
           accessoryRight={<Icon name="plus" />}
           onPress={() => setVisible(true)}
