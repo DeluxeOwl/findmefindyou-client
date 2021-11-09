@@ -11,6 +11,7 @@ import { navigationRef } from "./util/RootNavigation";
 import NotificationScreen from "./components/NotificationScreen";
 import Toast from "react-native-toast-message";
 import toastConfig from "./util/toastConfig";
+import InitialScreen from "./components/InitialScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -21,8 +22,9 @@ export default function App() {
       <IconRegistry icons={EvaIconsPack} />
       <ApplicationProvider {...eva} theme={{ ...eva.light }}>
         <NavigationContainer ref={navigationRef}>
-          <Stack.Navigator initialRouteName="Home">
-            <Stack.Screen
+          <Stack.Navigator initialRouteName="InitialScreen">
+            <Stack.Screen name="InitialScreen" component={InitialScreen} />
+            {/* <Stack.Screen
               name="Home"
               component={HomeScreen}
               options={{
@@ -30,7 +32,7 @@ export default function App() {
               }}
             />
             <Stack.Screen name="Map" component={MapScreen} />
-            <Stack.Screen name="Notifications" component={NotificationScreen} />
+            <Stack.Screen name="Notifications" component={NotificationScreen} /> */}
           </Stack.Navigator>
         </NavigationContainer>
       </ApplicationProvider>
