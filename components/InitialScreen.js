@@ -1,6 +1,8 @@
-import { Text, Button } from "@ui-kitten/components";
+import { Text } from "@ui-kitten/components";
 import React from "react";
-import { View, StyleSheet } from "react-native";
+import { StyleSheet, View } from "react-native";
+import GenerateAccountButton from "./GenerateAccountButton";
+import IHaveAkeyButton from "./IHaveAKeyButton";
 
 export default function InitialScreen({ navigation }) {
   return (
@@ -10,18 +12,9 @@ export default function InitialScreen({ navigation }) {
           Are you a new user of this application? 🙂
         </Text>
 
-        <Button
-          style={styles.button}
-          size="large"
-          status="control"
-          appearance="outline"
-        >
-          Yes, generate account
-        </Button>
+        <GenerateAccountButton text="Yes, generate account" />
 
-        <Button status="basic" size="medium" appearance="ghost">
-          No, I have a key
-        </Button>
+        <IHaveAkeyButton text="No, I have a key" />
       </View>
     </React.Fragment>
   );
@@ -37,12 +30,5 @@ const styles = StyleSheet.create({
   question: {
     color: "white",
     textAlign: "center",
-  },
-  button: {
-    margin: 2,
-    borderColor: "#eed369",
-    borderRadius: 4,
-    padding: 4,
-    margin: "5%",
   },
 });
