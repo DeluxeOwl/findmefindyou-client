@@ -3,6 +3,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { ApplicationProvider, IconRegistry } from "@ui-kitten/components";
 import { EvaIconsPack } from "@ui-kitten/eva-icons";
+import * as SQLite from "expo-sqlite";
 import { StatusBar } from "expo-status-bar";
 import React from "react";
 import Toast from "react-native-toast-message";
@@ -12,17 +13,21 @@ import LoadingScreen from "./components/LoadingScreen";
 import MapScreen from "./components/MapScreen";
 import NotificationScreen from "./components/NotificationScreen";
 import { credStore } from "./stores/credStore";
+import { getRandomCoordBetween, insertCoords } from "./util/dbUtils";
 import { navigationRef } from "./util/RootNavigation";
 import toastConfig from "./util/toastConfig";
-import * as SecureStore from "expo-secure-store";
 // For navigation
 const Stack = createNativeStackNavigator();
 
+const db = SQLite.openDatabase("coordinates.db");
+
 export default function App() {
   const { displayName, uniqueKey, fetchCreds } = credStore();
+  const [data, setData] = React.useState(null);
 
   React.useEffect(() => {
     console.log(displayName, uniqueKey);
+    console.log(JSON.stringify(data, null, 2));
   });
 
   React.useEffect(async () => {
@@ -30,6 +35,29 @@ export default function App() {
     // await SecureStore.deleteItemAsync("displayName");
     // await SecureStore.deleteItemAsync("uniqueKey");
     await fetchCreds();
+    db.transaction((tx) => {
+      tx.executeSql("drop table coordinates");
+      tx.executeSql(`
+      create table if not exists coordinates (
+          timestamp text not null,
+          coord_x real not null,
+          coord_y real not null
+      );    
+      `);
+    });
+
+    insertCoords(db, getRandomCoordBetween(), getRandomCoordBetween());
+    insertCoords(db, getRandomCoordBetween(), getRandomCoordBetween());
+    insertCoords(db, getRandomCoordBetween(), getRandomCoordBetween());
+    insertCoords(db, getRandomCoordBetween(), getRandomCoordBetween());
+
+    db.transaction((tx) => {
+      tx.executeSql(
+        `select * from coordinates;`,
+        [],
+        (_, { rows: { _array } }) => setData(_array)
+      );
+    });
   }, []);
 
   return (
