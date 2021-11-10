@@ -23,7 +23,11 @@ export default function App() {
       <ApplicationProvider {...eva} theme={{ ...eva.light }}>
         <NavigationContainer ref={navigationRef}>
           <Stack.Navigator initialRouteName="InitialScreen">
-            <Stack.Screen name="InitialScreen" component={InitialScreen} />
+            <Stack.Screen
+              name="InitialScreen"
+              component={InitialScreen}
+              options={{ headerShown: false }}
+            />
             {/* <Stack.Screen
               name="Home"
               component={HomeScreen}

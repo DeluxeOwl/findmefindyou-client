@@ -1,185 +1,48 @@
-import { Layout, Text } from "@ui-kitten/components";
-import React, { useState } from "react";
-import {
-  Platform,
-  ScrollView,
-  StyleSheet,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import Constants from "expo-constants";
-import * as SQLite from "expo-sqlite";
-
-function openDatabase() {
-  const db = SQLite.openDatabase("db.db");
-  return db;
-}
-
-const db = openDatabase();
-
-function Items({ done: doneHeading, onPressItem }) {
-  const [items, setItems] = React.useState(null);
-
-  React.useEffect(() => {
-    db.transaction((tx) => {
-      tx.executeSql(
-        `select * from items where done = ?;`,
-        [doneHeading ? 1 : 0],
-        (_, { rows: { _array } }) => setItems(_array)
-      );
-    });
-  }, []);
-
-  const heading = doneHeading ? "Completed" : "Todo";
-
-  if (items === null || items.length === 0) {
-    return null;
-  }
-
-  return (
-    <View style={styles.sectionContainer}>
-      <Text style={styles.sectionHeading}>{heading}</Text>
-      {items.map(({ id, done, value }) => (
-        <TouchableOpacity
-          key={id}
-          onPress={() => onPressItem && onPressItem(id)}
-          style={{
-            backgroundColor: done ? "#1c9963" : "#fff",
-            borderColor: "#000",
-            borderWidth: 1,
-            padding: 8,
-          }}
-        >
-          <Text style={{ color: done ? "#fff" : "#000" }}>{value}</Text>
-        </TouchableOpacity>
-      ))}
-    </View>
-  );
-}
+import { Text, Button } from "@ui-kitten/components";
+import React from "react";
+import { View, StyleSheet } from "react-native";
 
 export default function InitialScreen({ navigation }) {
-  const [text, setText] = React.useState(null);
-  const [forceUpdate, forceUpdateId] = useForceUpdate();
-  React.useEffect(() => {
-    db.transaction((tx) => {
-      tx.executeSql(
-        `create table if not exists items 
-        (id integer primary key not null,
-        done int,
-        value text);`
-      );
-    });
-  }, []);
-  const add = (text) => {
-    // is text empty?
-    if (text === null || text === "") {
-      return false;
-    }
-
-    db.transaction(
-      (tx) => {
-        tx.executeSql("insert into items (done, value) values (0, ?)", [text]);
-        tx.executeSql("select * from items", [], (_, { rows }) =>
-          console.log(JSON.stringify(rows))
-        );
-      },
-      null,
-      forceUpdate
-    );
-  };
   return (
     <React.Fragment>
-      <Layout
-        style={{ flex: 1, alignItems: "center", alignContent: "center" }}
-        level="1"
-      >
-        <Text style={styles.heading}>SQLite Example</Text>
-        <View style={styles.flexRow}>
-          <TextInput
-            onChangeText={(text) => setText(text)}
-            onSubmitEditing={() => {
-              add(text);
-              setText(null);
-            }}
-            placeholder="what do you need to do?"
-            style={styles.input}
-            value={text}
-          />
-        </View>
-        <ScrollView style={styles.listArea}>
-          <Items
-            key={`forceupdate-todo-${forceUpdateId}`}
-            done={false}
-            onPressItem={(id) =>
-              db.transaction(
-                (tx) => {
-                  tx.executeSql(`update items set done = 1 where id = ?;`, [
-                    id,
-                  ]);
-                },
-                null,
-                forceUpdate
-              )
-            }
-          />
-          <Items
-            done
-            key={`forceupdate-done-${forceUpdateId}`}
-            onPressItem={(id) =>
-              db.transaction(
-                (tx) => {
-                  tx.executeSql(`delete from items where id = ?;`, [id]);
-                },
-                null,
-                forceUpdate
-              )
-            }
-          />
-        </ScrollView>
-      </Layout>
+      <View style={styles.container}>
+        <Text category="h2" style={styles.question}>
+          Are you a new user of this application? 🙂
+        </Text>
+
+        <Button
+          style={styles.button}
+          size="large"
+          status="control"
+          appearance="outline"
+        >
+          Yes, generate account
+        </Button>
+
+        <Button status="basic" size="medium" appearance="ghost">
+          No, I have a key
+        </Button>
+      </View>
     </React.Fragment>
   );
-}
-function useForceUpdate() {
-  const [value, setValue] = useState(0);
-  return [() => setValue(value + 1), value];
 }
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#fff",
     flex: 1,
-    paddingTop: Constants.statusBarHeight,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#083045",
   },
-  heading: {
-    fontSize: 20,
-    fontWeight: "bold",
+  question: {
+    color: "white",
     textAlign: "center",
   },
-  flexRow: {
-    flexDirection: "row",
-  },
-  input: {
-    borderColor: "#4630eb",
+  button: {
+    margin: 2,
+    borderColor: "#eed369",
     borderRadius: 4,
-    borderWidth: 1,
-    flex: 1,
-    height: 48,
-    margin: 16,
-    padding: 8,
-  },
-  listArea: {
-    backgroundColor: "#f0f0f0",
-    flex: 1,
-    paddingTop: 16,
-  },
-  sectionContainer: {
-    marginBottom: 16,
-    marginHorizontal: 16,
-  },
-  sectionHeading: {
-    fontSize: 18,
-    marginBottom: 8,
+    padding: 4,
+    margin: "5%",
   },
 });
