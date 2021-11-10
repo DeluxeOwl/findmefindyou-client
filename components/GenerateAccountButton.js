@@ -4,12 +4,15 @@ import { StyleSheet } from "react-native";
 import env from "../env.js";
 import showToast from "../util/showToast";
 import * as SecureStore from "expo-secure-store";
+import { credStore } from "../stores/credStore";
 
 export default function GenerateAccountButton({ text }) {
   const [uniqueKey, setUniqueKey] = React.useState("");
   const [displayName, setDisplayName] = React.useState("");
   // State of the modal
   const [visible, setVisible] = React.useState(false);
+
+  const fetchCreds = credStore((s) => s.fetchCreds);
 
   // Used only to print the values in the secure store for testing
   // React.useEffect(async () => {
@@ -40,17 +43,13 @@ export default function GenerateAccountButton({ text }) {
       return;
     }
 
+    // TODO: send request to backend
+
     // Set the items in the secure store
     await SecureStore.setItemAsync("displayName", displayName);
     await SecureStore.setItemAsync("uniqueKey", uniqueKey);
 
-    console.warn(`
-      1. Store the display name and key
-      2. Send a request to backend to store these
-      3. Should set some kind of global var to not show this page again in App.js and 
-      show the rest of the navigator
-      4. Should redirect to home
-      `);
+    await fetchCreds();
   };
 
   return (

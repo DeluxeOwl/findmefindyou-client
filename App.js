@@ -58,7 +58,7 @@ export default function App() {
                 name="Home"
                 component={HomeScreen}
                 options={{
-                  headerTitle: "id: virtuous-defender-onboard",
+                  headerTitle: `id: ${displayName}`,
                 }}
               />
               <Stack.Screen name="Map" component={MapScreen} />
