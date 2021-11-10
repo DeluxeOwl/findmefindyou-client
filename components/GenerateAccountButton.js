@@ -1,20 +1,54 @@
 import { Button, Card, Modal, Text } from "@ui-kitten/components";
 import React from "react";
 import { StyleSheet } from "react-native";
+import env from "../env.js";
+import showToast from "../util/showToast";
+import * as SecureStore from "expo-secure-store";
 export default function GenerateAccountButton({ text }) {
-  // TODO: fetch this from backend using rquery
-  const [uniqueKey, setUniqueKey] = React.useState("u7f8S7-dyds3");
-  const [userDisplayName, setUserDisplayName] =
-    React.useState("early-able-tiger");
+  const [uniqueKey, setUniqueKey] = React.useState("");
+  const [displayName, setDisplayName] = React.useState("");
   // State of the modal
   const [visible, setVisible] = React.useState(false);
 
-  const handleAccountCreation = () => {
+  // Used only to print the values in the secure store for testing
+  // React.useEffect(async () => {
+  //   let dn = await SecureStore.getItemAsync("displayName");
+  //   let uk = await SecureStore.getItemAsync("uniqueKey");
+
+  //   console.log("From secure store:", dn, uk);
+  // });
+
+  // Fetch the credentials on component mount
+  React.useEffect(async () => {
+    try {
+      const creds = await fetch(`${env.BACKEND_URL}/init`);
+      const { display_name, unique_key } = await creds.json();
+      setDisplayName(display_name);
+      setUniqueKey(unique_key);
+    } catch (e) {
+      showToast({
+        type: "error",
+        topText: "Error",
+        bottomText: "Please restart the app",
+      });
+    }
+  }, []);
+
+  const handleAccountCreation = async () => {
+    if (uniqueKey === "" || displayName === "") {
+      return;
+    }
+
+    // Set the items in the secure store
+    await SecureStore.setItemAsync("displayName", displayName);
+    await SecureStore.setItemAsync("uniqueKey", uniqueKey);
+
     console.warn(`
-      1. Store the ${userDisplayName} and ${uniqueKey} in the secret store
-      2. Should set some kind of global var to not show this page again in App.js and 
+      1. Store the display name and key
+      2. Send a request to backend to store these
+      3. Should set some kind of global var to not show this page again in App.js and 
       show the rest of the navigator
-      3. Should redirect to home
+      4. Should redirect to home
       `);
   };
 
@@ -27,7 +61,6 @@ export default function GenerateAccountButton({ text }) {
         appearance="outline"
         onPress={() => {
           setVisible(true);
-          console.warn("should fetch data");
         }}
       >
         {text}

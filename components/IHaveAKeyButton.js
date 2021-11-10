@@ -1,7 +1,9 @@
-import { Button, Card, Modal, Input } from "@ui-kitten/components";
+import { Button, Card, Input, Modal } from "@ui-kitten/components";
 import React from "react";
 import { StyleSheet } from "react-native";
+
 import showToast from "../util/showToast";
+import env from "../env.js";
 
 export default function IHaveAkeyButton({ text }) {
   const [uniqueKey, setUniqueKey] = React.useState("");
@@ -12,7 +14,7 @@ export default function IHaveAkeyButton({ text }) {
   // get the location data, store it in the db?
   // redirect to home screen
   // don't show this page again
-  const handleAccountFetch = () => {
+  const handleAccountFetch = async () => {
     showToast({
       topText: "Error",
       type: "error",

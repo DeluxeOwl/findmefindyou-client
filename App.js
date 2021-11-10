@@ -13,6 +13,7 @@ import Toast from "react-native-toast-message";
 import toastConfig from "./util/toastConfig";
 import InitialScreen from "./components/InitialScreen";
 
+// For navigation
 const Stack = createNativeStackNavigator();
 
 export default function App() {
