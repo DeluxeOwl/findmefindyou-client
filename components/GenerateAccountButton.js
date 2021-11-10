@@ -4,6 +4,7 @@ import { StyleSheet } from "react-native";
 import env from "../env.js";
 import showToast from "../util/showToast";
 import * as SecureStore from "expo-secure-store";
+
 export default function GenerateAccountButton({ text }) {
   const [uniqueKey, setUniqueKey] = React.useState("");
   const [displayName, setDisplayName] = React.useState("");

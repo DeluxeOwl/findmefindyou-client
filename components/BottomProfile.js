@@ -5,6 +5,7 @@ import React from "react";
 import { Platform, Pressable, StyleSheet, View } from "react-native";
 import * as RootNavigation from "../util/RootNavigation";
 import showToast from "../util/showToast";
+
 export default function BottomProfile({
   avatarUri,
   name,
