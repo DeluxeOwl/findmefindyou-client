@@ -3,6 +3,10 @@ import * as SecureStore from "expo-secure-store";
 const credStore = create((set) => ({
   displayName: "",
   uniqueKey: "",
+  lastSync: "never",
+  setLastSync: (val) => {
+    val !== null && set({ lastSync: val });
+  },
   fetchCreds: async () => {
     set({
       displayName: await SecureStore.getItemAsync("displayName"),

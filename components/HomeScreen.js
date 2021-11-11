@@ -19,7 +19,6 @@ export default function HomeScreen({ navigation }) {
         <BottomProfile
           avatarUri="https://akveo.github.io/react-native-ui-kitten/docs/assets/playground-build/static/media/icon.a78e4b51.png"
           name={displayName}
-          status="Last sync: 3m ago"
           notifNumber={1}
         />
       </Layout>

@@ -21,13 +21,14 @@ const Stack = createNativeStackNavigator();
 
 import { db } from "./stores/database";
 
+// TODO: clear up comments
 export default function App() {
   const { displayName, uniqueKey, fetchCreds } = credStore();
-  const [data, setData] = React.useState(null);
+  // const [data, setData] = React.useState(null);
 
   React.useEffect(() => {
     console.log(displayName, uniqueKey);
-    console.log(JSON.stringify(data, null, 2));
+    // console.log(JSON.stringify(data, null, 2));
   });
 
   React.useEffect(async () => {
@@ -37,7 +38,7 @@ export default function App() {
     await fetchCreds();
     // Create the table
     db.transaction((tx) => {
-      tx.executeSql("drop table coordinates");
+      // tx.executeSql("drop table coordinates");
       tx.executeSql(`
       create table if not exists coordinates (
           timestamp text not null,
@@ -46,27 +47,27 @@ export default function App() {
       );    
       `);
       // Insert random values
-      for (let i = 0; i < 4; i++) {
-        tx.executeSql(
-          `
-              insert into coordinates (timestamp, coord_x, coord_y)
-              values (?, ?, ?)
-              `,
-          [
-            dayjs().format("YYYY-MM-DD HH:mm:ss.SSS").toString(),
-            Number((Math.random() * 121 - 60).toFixed(7)),
-            Number((Math.random() * 121 - 60).toFixed(7)),
-          ]
-        );
-      }
+      // for (let i = 0; i < 4; i++) {
+      //   tx.executeSql(
+      //     `
+      //         insert into coordinates (timestamp, coord_x, coord_y)
+      //         values (?, ?, ?)
+      //         `,
+      //     [
+      //       dayjs().format("YYYY-MM-DD HH:mm:ss.SSS").toString(),
+      //       Number((Math.random() * 121 - 60).toFixed(7)),
+      //       Number((Math.random() * 121 - 60).toFixed(7)),
+      //     ]
+      //   );
+      // }
     });
-    db.transaction((tx) => {
-      tx.executeSql(
-        `select * from coordinates;`,
-        [],
-        (_, { rows: { _array } }) => setData(_array)
-      );
-    });
+    // db.transaction((tx) => {
+    //   tx.executeSql(
+    //     `select * from coordinates;`,
+    //     [],
+    //     (_, { rows: { _array } }) => setData(_array)
+    //   );
+    // });
   }, []);
 
   return (

@@ -5,16 +5,44 @@ import React from "react";
 import { Platform, Pressable, StyleSheet, View } from "react-native";
 import * as RootNavigation from "../util/RootNavigation";
 import showToast from "../util/showToast";
+import { db } from "../stores/database";
+import { credStore } from "../stores/credStore";
+import shallow from "zustand/shallow";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
 
-export default function BottomProfile({
-  avatarUri,
-  name,
-  status,
-  notifNumber,
-}) {
+export default function BottomProfile({ avatarUri, name, notifNumber }) {
+  // Last time synced
+  const [lastSync, setLastSync] = credStore(
+    (s) => [s.lastSync, s.setLastSync],
+    shallow
+  );
+
   // State of the modal for image upload
   const [visible, setVisible] = React.useState(false);
   const [image, setImage] = React.useState(null);
+
+  // This use effect runs periodically and updates the 'last sync' status
+  React.useEffect(() => {
+    // Needs plugin for relative time
+    dayjs.extend(relativeTime);
+
+    const id = setInterval(() => {
+      db.transaction((tx) => {
+        tx.executeSql(
+          `select timestamp from coordinates order by timestamp desc limit 1`,
+          [],
+          (_, { rows: { _array } }) =>
+            setLastSync(dayjs(_array[0]["timestamp"]).toNow(true))
+        );
+      });
+    }, 60000);
+
+    return () => {
+      clearInterval(id);
+    };
+  }, []);
+
   // We're using a reference to the react navigator to avoid
   // some hook errors
   const handleNav = () => {
@@ -109,7 +137,7 @@ export default function BottomProfile({
         <View style={styles.authoringInfoContainer}>
           <Text>{name}</Text>
           <Text appearance="hint" category="p2">
-            {status}
+            {`Last sync: ${lastSync} ago`}
           </Text>
         </View>
         <Button
