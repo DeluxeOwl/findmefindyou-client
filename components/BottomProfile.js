@@ -18,11 +18,14 @@ export default function BottomProfile({ avatarUri, name, notifNumber }) {
     shallow
   );
 
+  console.log(lastSync);
+
   // State of the modal for image upload
   const [visible, setVisible] = React.useState(false);
   const [image, setImage] = React.useState(null);
 
   // This use effect runs periodically and updates the 'last sync' status
+  // it's a little bit finnicky ... make sure there is some data in the db
   React.useEffect(() => {
     // Needs plugin for relative time
     dayjs.extend(relativeTime);
@@ -36,7 +39,7 @@ export default function BottomProfile({ avatarUri, name, notifNumber }) {
             setLastSync(dayjs(_array[0]["timestamp"]).toNow(true))
         );
       });
-    }, 60000);
+    }, 30000);
 
     return () => {
       clearInterval(id);
