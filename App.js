@@ -19,7 +19,7 @@ import toastConfig from "./util/toastConfig";
 // For navigation
 const Stack = createNativeStackNavigator();
 
-const db = SQLite.openDatabase("coordinates.db");
+import { db } from "./stores/database";
 
 export default function App() {
   const { displayName, uniqueKey, fetchCreds } = credStore();
