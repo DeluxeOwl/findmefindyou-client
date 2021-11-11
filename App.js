@@ -3,6 +3,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { ApplicationProvider, IconRegistry } from "@ui-kitten/components";
 import { EvaIconsPack } from "@ui-kitten/eva-icons";
+import dayjs from "dayjs";
 import * as SQLite from "expo-sqlite";
 import { StatusBar } from "expo-status-bar";
 import React from "react";
@@ -13,7 +14,6 @@ import LoadingScreen from "./components/LoadingScreen";
 import MapScreen from "./components/MapScreen";
 import NotificationScreen from "./components/NotificationScreen";
 import { credStore } from "./stores/credStore";
-import { getRandomCoordBetween, insertCoords } from "./util/dbUtils";
 import { navigationRef } from "./util/RootNavigation";
 import toastConfig from "./util/toastConfig";
 // For navigation
@@ -35,6 +35,7 @@ export default function App() {
     // await SecureStore.deleteItemAsync("displayName");
     // await SecureStore.deleteItemAsync("uniqueKey");
     await fetchCreds();
+    // Create the table
     db.transaction((tx) => {
       tx.executeSql("drop table coordinates");
       tx.executeSql(`
@@ -44,13 +45,21 @@ export default function App() {
           coord_y real not null
       );    
       `);
+      // Insert random values
+      for (let i = 0; i < 4; i++) {
+        tx.executeSql(
+          `
+              insert into coordinates (timestamp, coord_x, coord_y)
+              values (?, ?, ?)
+              `,
+          [
+            dayjs().format("YYYY-MM-DD HH:mm:ss.SSS").toString(),
+            Number((Math.random() * 121 - 60).toFixed(7)),
+            Number((Math.random() * 121 - 60).toFixed(7)),
+          ]
+        );
+      }
     });
-
-    insertCoords(db, getRandomCoordBetween(), getRandomCoordBetween());
-    insertCoords(db, getRandomCoordBetween(), getRandomCoordBetween());
-    insertCoords(db, getRandomCoordBetween(), getRandomCoordBetween());
-    insertCoords(db, getRandomCoordBetween(), getRandomCoordBetween());
-
     db.transaction((tx) => {
       tx.executeSql(
         `select * from coordinates;`,
