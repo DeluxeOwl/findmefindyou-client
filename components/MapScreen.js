@@ -1,4 +1,5 @@
-import { Layout, RangeDatepicker } from "@ui-kitten/components";
+import { Layout, RangeDatepicker, Divider, Text } from "@ui-kitten/components";
+import { StyleSheet } from "react-native";
 import React from "react";
 import dayjs from "dayjs";
 
@@ -20,6 +21,8 @@ export default function MapScreen({ route, navigation }) {
   React.useEffect(() => {
     console.warn(`Showing map for userID ${userID}`);
   }, []);
+
+  // Format the date to our standard.
   React.useEffect(() => {
     let startDateString = "";
     let endDateString = "";
@@ -37,16 +40,36 @@ export default function MapScreen({ route, navigation }) {
   }, [range]);
 
   return (
-    <Layout
-      style={{ flex: 1, alignItems: "center", justifyContent: "flex-end" }}
-      level="1"
-    >
-      <RangeDatepicker
-        min={oneWeekAgo}
-        max={now}
-        range={range}
-        onSelect={(nextRange) => setRange(nextRange)}
-      />
+    <Layout style={{ flex: 1, justifyContent: "flex-end" }} level="1">
+      <Layout style={styles.mapContainer}></Layout>
+      <Divider />
+      <Layout style={styles.dateContainer}>
+        <RangeDatepicker
+          style={styles.datePicker}
+          min={oneWeekAgo}
+          max={now}
+          range={range}
+          onSelect={(nextRange) => setRange(nextRange)}
+        />
+        <Text style={styles.text} category="h2">
+          Pick a date 🗓
+        </Text>
+      </Layout>
     </Layout>
   );
 }
+const styles = StyleSheet.create({
+  mapContainer: {
+    flex: 5,
+  },
+  dateContainer: {
+    flex: 1,
+  },
+  text: {
+    marginVertical: 10,
+    textAlign: "center",
+  },
+  datePicker: {
+    margin: 5,
+  },
+});
