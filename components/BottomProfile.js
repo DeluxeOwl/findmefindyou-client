@@ -18,8 +18,6 @@ export default function BottomProfile({ avatarUri, name, notifNumber }) {
     shallow
   );
 
-  console.log(lastSync);
-
   // State of the modal for image upload
   const [visible, setVisible] = React.useState(false);
   const [image, setImage] = React.useState(null);
