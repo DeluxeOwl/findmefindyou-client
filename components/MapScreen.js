@@ -1,5 +1,6 @@
 import { Layout, RangeDatepicker, Divider, Text } from "@ui-kitten/components";
 import { StyleSheet } from "react-native";
+import showToast from "../util/showToast";
 import React from "react";
 import dayjs from "dayjs";
 
@@ -19,7 +20,11 @@ export default function MapScreen({ route, navigation }) {
   const [range, setRange] = React.useState({ startDate: now, endDate: null });
 
   React.useEffect(() => {
-    console.warn(`Showing map for userID ${userID}`);
+    showToast({
+      type: "info",
+      topText: "Info",
+      bottomText: `Showing map for userID ${userID}`,
+    });
   }, []);
 
   // Format the date to our standard.
