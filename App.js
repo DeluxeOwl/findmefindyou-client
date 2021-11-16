@@ -99,7 +99,11 @@ export default function App() {
                   headerTitle: `id: ${displayName}`,
                 }}
               />
-              <Stack.Screen name="Map" component={MapScreen} />
+              <Stack.Screen
+                name="Map"
+                component={MapScreen}
+                options={({ route }) => ({ headerTitle: route.params.headerTitle })}
+              />
               <Stack.Screen
                 name="Notifications"
                 component={NotificationScreen}

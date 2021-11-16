@@ -6,7 +6,10 @@ import * as RootNavigation from "../util/RootNavigation";
 
 export default function UserItem({ item, index }) {
   const handleNav = () => {
-    RootNavigation.navigate("Map", { userID: `${index + 1}` });
+    RootNavigation.navigate("Map", {
+      userID: `${index + 1}`,
+      headerTitle: `Map: UserID ${index + 1}`,
+    });
   };
 
   return (

@@ -1,8 +1,7 @@
-import { Layout, RangeDatepicker, Divider, Text } from "@ui-kitten/components";
-import { StyleSheet } from "react-native";
-import showToast from "../util/showToast";
-import React from "react";
+import { Divider, Layout, RangeDatepicker, Text } from "@ui-kitten/components";
 import dayjs from "dayjs";
+import React from "react";
+import { StyleSheet } from "react-native";
 import Map from "./Map";
 
 // You can only see the coordinates for a user from
@@ -19,14 +18,6 @@ const oneWeekAgo = new Date(
 export default function MapScreen({ route, navigation }) {
   const { userID } = route.params;
   const [range, setRange] = React.useState({ startDate: now, endDate: null });
-
-  React.useEffect(() => {
-    showToast({
-      type: "info",
-      topText: "Info",
-      bottomText: `Showing map for userID ${userID}`,
-    });
-  }, []);
 
   // Format the date to our standard.
   React.useEffect(() => {
