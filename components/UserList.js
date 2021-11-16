@@ -8,13 +8,14 @@ export default function UserList() {
   const data = userStore((s) => s.data);
 
   return (
-    <Layout>
-      <List style={styles.container} data={data} renderItem={UserItem} />
+    <Layout style={styles.container}>
+      <List data={data} renderItem={UserItem} />
     </Layout>
   );
 }
 const styles = StyleSheet.create({
   container: {
+    flex: 0.8,
     maxHeight: 192 * 3,
     margin: 2,
   },

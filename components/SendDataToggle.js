@@ -14,7 +14,7 @@ export default function SendDataToggle() {
     toggleDataStore(!toggled);
   };
   return (
-    <Layout>
+    <Layout styles={styles.container}>
       <Toggle
         style={styles.toggle}
         checked={toggled}
@@ -27,6 +27,7 @@ export default function SendDataToggle() {
 }
 
 const styles = StyleSheet.create({
+  container: { flex: 0.05 },
   toggle: {
     marginVertical: "5%",
   },

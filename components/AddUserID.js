@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
     width: "75%",
   },
   containerAdd: {
-    flex: 1,
+    flex: 0.05,
     alignItems: "center",
     marginVertical: "5%",
   },

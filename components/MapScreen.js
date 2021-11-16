@@ -3,6 +3,7 @@ import { StyleSheet } from "react-native";
 import showToast from "../util/showToast";
 import React from "react";
 import dayjs from "dayjs";
+import Map from "./Map";
 
 // You can only see the coordinates for a user from
 // the past week until today, used in RangeDatepicker
@@ -46,7 +47,9 @@ export default function MapScreen({ route, navigation }) {
 
   return (
     <Layout style={{ flex: 1, justifyContent: "flex-end" }} level="1">
-      <Layout style={styles.mapContainer}></Layout>
+      <Layout style={styles.mapContainer}>
+        <Map></Map>
+      </Layout>
       <Divider />
       <Layout style={styles.dateContainer}>
         <RangeDatepicker

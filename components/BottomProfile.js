@@ -1,4 +1,12 @@
-import { Avatar, Button, Card, Icon, Modal, Text } from "@ui-kitten/components";
+import {
+  Avatar,
+  Button,
+  Card,
+  Icon,
+  Layout,
+  Modal,
+  Text,
+} from "@ui-kitten/components";
 import { manipulateAsync } from "expo-image-manipulator";
 import * as ImagePicker from "expo-image-picker";
 import React from "react";
@@ -10,6 +18,12 @@ import { credStore } from "../stores/credStore";
 import shallow from "zustand/shallow";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
+import { StatusBar, Dimensions } from "react-native";
+
+const SCREEN_HEIGHT = Dimensions.get("screen").height;
+const STATUS_BAR_HEIGHT = StatusBar.currentHeight;
+const WINDOW_HEIGHT = Dimensions.get("window").height;
+const BOTTOM_BAR_HEIGHT = SCREEN_HEIGHT - WINDOW_HEIGHT + STATUS_BAR_HEIGHT;
 
 export default function BottomProfile({ avatarUri, name, notifNumber }) {
   // Last time synced
@@ -106,7 +120,7 @@ export default function BottomProfile({ avatarUri, name, notifNumber }) {
     setVisible(false);
   };
   return (
-    <React.Fragment>
+    <Layout style={styles.container}>
       <Modal
         visible={visible}
         backdropStyle={styles.backdrop}
@@ -157,10 +171,11 @@ export default function BottomProfile({ avatarUri, name, notifNumber }) {
           {notifNumber === 0 ? "" : `${notifNumber} new`}
         </Button>
       </View>
-    </React.Fragment>
+    </Layout>
   );
 }
 const styles = StyleSheet.create({
+  container: { flex: 0.1, marginBottom: BOTTOM_BAR_HEIGHT },
   activityContainer: {
     flexDirection: "row",
     alignItems: "center",
