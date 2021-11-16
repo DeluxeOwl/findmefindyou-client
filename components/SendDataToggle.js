@@ -4,6 +4,7 @@ import * as SecureStore from "expo-secure-store";
 import * as TaskManager from "expo-task-manager";
 import React from "react";
 import { StyleSheet } from "react-native";
+import showToast from "../util/showToast";
 
 const LOCATION_TASK_NAME = "background-location-task";
 
@@ -38,10 +39,36 @@ export default function SendDataToggle() {
     }
   };
 
-  // When you switch the toggle, set it in the store first, then update UI
+  // You better read through this code to understand
   const onActiveCheckedChange = async () => {
-    await SecureStore.setItemAsync("collectLocationBg", (!toggled).toString());
-    setToggled((t) => !t);
+    // get the value of the next toggle
+    const toggleNextVal = !toggled;
+
+    // Ask for permission to collect location information in the bg
+    const { status } = await Location.requestBackgroundPermissionsAsync();
+    if (status === "granted") {
+      // set the nextval in store
+      await SecureStore.setItemAsync(
+        "collectLocationBg",
+        toggleNextVal.toString()
+      );
+      // if the next value is true, start the task, otherwise stop it
+      if (toggleNextVal) {
+        await Location.startLocationUpdatesAsync(LOCATION_TASK_NAME, {
+          accuracy: Location.Accuracy.High,
+        });
+      } else {
+        await Location.stopLocationUpdatesAsync(LOCATION_TASK_NAME);
+      }
+      // finally, update the UI
+      setToggled((t) => toggleNextVal);
+    } else {
+      showToast({
+        type: "error",
+        topText: "Error",
+        bottomText: "Need location permission",
+      });
+    }
   };
   return (
     <Layout styles={styles.container}>
