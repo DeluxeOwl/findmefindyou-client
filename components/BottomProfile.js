@@ -113,7 +113,7 @@ export default function BottomProfile({ avatarUri, name, notifNumber }) {
           bottomText: "Image uploaded successfully!",
         });
 
-        console.log(manipResult);
+        console.log("Bottom profile, image ⟶ ", manipResult);
       } catch (error) {
         showToast({
           type: "error",

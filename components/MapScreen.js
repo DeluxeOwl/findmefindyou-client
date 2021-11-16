@@ -32,8 +32,8 @@ export default function MapScreen({ route, navigation }) {
     if (range.endDate !== null) {
       endDateString = dayjs(range.endDate).format("YYYY-MM-DD HH:mm:ss.SSS");
     }
-    console.log(`start: ${startDateString}`);
-    console.log(`end: ${endDateString}`);
+    console.log(`MapScreen.js ⟶ start: ${startDateString}`);
+    console.log(`MapScreen.js ⟶ end: ${endDateString}`);
   }, [range]);
 
   return (

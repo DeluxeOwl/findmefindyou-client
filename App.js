@@ -27,7 +27,7 @@ export default function App() {
   // const [data, setData] = React.useState(null);
 
   React.useEffect(() => {
-    console.log(displayName, uniqueKey);
+    console.log("App.js ⟶ rerender: ", displayName, uniqueKey);
     // console.log(JSON.stringify(data, null, 2));
   });
 
