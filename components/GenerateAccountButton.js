@@ -14,14 +14,6 @@ export default function GenerateAccountButton({ text }) {
 
   const fetchCreds = credStore((s) => s.fetchCreds);
 
-  // Used only to print the values in the secure store for testing
-  // React.useEffect(async () => {
-  //   let dn = await SecureStore.getItemAsync("displayName");
-  //   let uk = await SecureStore.getItemAsync("uniqueKey");
-
-  //   console.log("From secure store:", dn, uk);
-  // });
-
   // Fetch the credentials on component mount
   React.useEffect(async () => {
     try {

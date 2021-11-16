@@ -4,14 +4,16 @@ import { StyleSheet } from "react-native";
 import { useLocationDataStore } from "../stores/locationDataStore";
 
 export default function SendDataToggle() {
-  const [activeChecked, setActiveChecked] = React.useState(true);
-  const [toggled, toggleDataStore] = useLocationDataStore((s) => [
-    s.toggled,
-    s.toggleDataStore,
-  ]);
+  const [toggled, toggleDataStore, initDataStore] = useLocationDataStore(
+    (s) => [s.toggled, s.toggleDataStore, s.initDataStore]
+  );
 
-  const onActiveCheckedChange = (isChecked) => {
-    toggleDataStore(!toggled);
+  React.useEffect(async () => {
+    await initDataStore();
+  }, []);
+
+  const onActiveCheckedChange = async () => {
+    await toggleDataStore(!toggled);
   };
   return (
     <Layout styles={styles.container}>

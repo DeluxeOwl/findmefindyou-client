@@ -39,7 +39,7 @@ export default function MapScreen({ route, navigation }) {
   return (
     <Layout style={{ flex: 1, justifyContent: "flex-end" }} level="1">
       <Layout style={styles.mapContainer}>
-        <Map></Map>
+        <Map />
       </Layout>
       <Divider />
       <Layout style={styles.dateContainer}>

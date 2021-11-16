@@ -102,7 +102,9 @@ export default function App() {
               <Stack.Screen
                 name="Map"
                 component={MapScreen}
-                options={({ route }) => ({ headerTitle: route.params.headerTitle })}
+                options={({ route }) => ({
+                  headerTitle: route.params.headerTitle,
+                })}
               />
               <Stack.Screen
                 name="Notifications"
