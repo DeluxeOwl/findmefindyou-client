@@ -7,18 +7,24 @@ import {
   Modal,
   Text,
 } from "@ui-kitten/components";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
 import { manipulateAsync } from "expo-image-manipulator";
 import * as ImagePicker from "expo-image-picker";
 import React from "react";
-import { Platform, Pressable, StyleSheet, View } from "react-native";
+import {
+  Dimensions,
+  Platform,
+  Pressable,
+  StatusBar,
+  StyleSheet,
+  View,
+} from "react-native";
+import shallow from "zustand/shallow";
+import { credStore } from "../stores/credStore";
+import { db } from "../stores/database";
 import * as RootNavigation from "../util/RootNavigation";
 import showToast from "../util/showToast";
-import { db } from "../stores/database";
-import { credStore } from "../stores/credStore";
-import shallow from "zustand/shallow";
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
-import { StatusBar, Dimensions } from "react-native";
 
 const SCREEN_HEIGHT = Dimensions.get("screen").height;
 const STATUS_BAR_HEIGHT = StatusBar.currentHeight;

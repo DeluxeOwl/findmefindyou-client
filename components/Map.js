@@ -1,38 +1,38 @@
 import * as React from "react";
+import { Dimensions, Image, StyleSheet, Text, View } from "react-native";
 import MapView, { Marker, Polyline } from "react-native-maps";
-//import Marker from "react-native-maps";
-import { StyleSheet, Text, View, Dimensions } from "react-native";
-import * as Location from "expo-location";
-import { Image } from "react-native";
+
+// TODO: remove these hardcoded values
+const latitude_REMOVE = 45.7650466;
+const longitude_REMOVE = 21.2165824;
 
 export default function Map() {
-  const [location, setLocation] = React.useState(null);
+  // TODO: remove this, should show loading screen when fetching data
+  const isDataLoaded = true;
+
   const [markers, setMarkers] = React.useState([]);
   const [polylineCoords, setPolylineCoords] = React.useState([]);
   React.useEffect(() => {
-    (async () => {
-      let location = await Location.getCurrentPositionAsync({});
-      setLocation(location);
-      setMarkers((markers) => [
-        ...markers,
-        {
-          title: "Home",
-          latlng: {
-            latitude: location.coords.latitude,
-            longitude: location.coords.longitude,
-          },
+    setMarkers((markers) => [
+      ...markers,
+      {
+        title: "Start",
+        latlng: {
+          latitude: latitude_REMOVE,
+          longitude: longitude_REMOVE,
         },
-      ]);
-      setPolylineCoords((polylineCoords) => [
-        ...polylineCoords,
-        {
-          latitude: location.coords.latitude,
-          longitude: location.coords.longitude,
-        },
-      ]);
-    })();
+      },
+    ]);
+    setPolylineCoords((polylineCoords) => [
+      ...polylineCoords,
+      {
+        latitude: latitude_REMOVE,
+        longitude: longitude_REMOVE,
+      },
+    ]);
   }, []);
-  // ddsda
+
+  // TODO: remove this (testing only)
   const handleMapPress = (e) => {
     const newMarker = {
       title: `Marker ${markers.length}`,
@@ -47,14 +47,14 @@ export default function Map() {
 
   return (
     <View style={styles.container}>
-      {!location ? (
+      {!isDataLoaded ? (
         <Text>Loading</Text>
       ) : (
         <MapView
           style={styles.map}
           initialRegion={{
-            latitude: location.coords.latitude,
-            longitude: location.coords.longitude,
+            latitude: latitude_REMOVE,
+            longitude: longitude_REMOVE,
             latitudeDelta: 0.0922,
             longitudeDelta: 0.0421,
           }}
@@ -72,7 +72,9 @@ export default function Map() {
                 // image={{ uri: "./assets/trading_capybara" }}
               >
                 <Image
-                  source={require("../assets/trading_capybara.png")}
+                  source={{
+                    uri: "https://akveo.github.io/react-native-ui-kitten/docs/assets/playground-build/static/media/icon.a78e4b51.png",
+                  }}
                   style={{ height: 35, width: 35, borderRadius: 10 }}
                 />
               </Marker>
