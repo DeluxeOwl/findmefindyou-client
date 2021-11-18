@@ -25,6 +25,7 @@ import { credStore } from "../stores/credStore";
 import { db } from "../stores/database";
 import * as RootNavigation from "../util/RootNavigation";
 import showToast from "../util/showToast";
+import env from "../env.js";
 
 const SCREEN_HEIGHT = Dimensions.get("screen").height;
 const STATUS_BAR_HEIGHT = StatusBar.currentHeight;
@@ -33,14 +34,13 @@ const BOTTOM_BAR_HEIGHT = SCREEN_HEIGHT - WINDOW_HEIGHT + STATUS_BAR_HEIGHT;
 
 export default function BottomProfile({ avatarUri, name, notifNumber }) {
   // Last time synced
-  const [lastSync, setLastSync] = credStore(
-    (s) => [s.lastSync, s.setLastSync],
+  const [lastSync, setLastSync, uniqueKey] = credStore(
+    (s) => [s.lastSync, s.setLastSync, s.uniqueKey],
     shallow
   );
 
   // State of the modal for image upload
   const [visible, setVisible] = React.useState(false);
-  const [image, setImage] = React.useState(null);
 
   // This use effect runs periodically and updates the 'last sync' status
   // it's a little bit finnicky ... make sure there is some data in the db
@@ -89,31 +89,54 @@ export default function BottomProfile({ avatarUri, name, notifNumber }) {
       }
     })();
   };
-  // TODO: consider encoding it as base64
+
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
       aspect: [3, 3],
-      quality: 0,
+      quality: 1,
     });
 
     if (!result.cancelled) {
       try {
         const manipResult = await manipulateAsync(
           result.uri,
-          [{ resize: { width: 100, height: 100 } }],
+          [{ resize: { width: 300, height: 300 } }],
           { compress: 1 }
         );
-        setImage(manipResult.uri);
+
+        console.log("Bottom profile, image ⟶ ", manipResult);
+        // Get the fileName, basically an uuid with the extension
+        const filename = manipResult.uri.split("/").pop();
+
+        // Infer the type of the image
+        const match = /\.(\w+)$/.exec(filename);
+        const type = match ? `image/${match[1]}` : `image`;
+
+        // Upload the image using the fetch and FormData APIs
+        let formData = new FormData();
+        // Assume "photo" is the name of the form field the server expects
+        formData.append("photo", {
+          uri: manipResult.uri,
+          name: filename,
+          type,
+        });
+
+        await fetch(`${env.BACKEND_URL}/upload_avatar`, {
+          method: "POST",
+          body: formData,
+          headers: {
+            "Content-Type": "multipart/form-data",
+            "X-Key": uniqueKey,
+          },
+        });
 
         showToast({
           type: "success",
           topText: "Success",
           bottomText: "Image uploaded successfully!",
         });
-
-        console.log("Bottom profile, image ⟶ ", manipResult);
       } catch (error) {
         showToast({
           type: "error",
