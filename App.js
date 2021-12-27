@@ -33,8 +33,6 @@ export default function App() {
 
   React.useEffect(async () => {
     // Use this to delete the items from the store
-    // await SecureStore.deleteItemAsync("displayName");
-    // await SecureStore.deleteItemAsync("uniqueKey");
     await fetchCreds();
     // Create the table
     db.transaction((tx) => {

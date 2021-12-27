@@ -22,6 +22,7 @@ import {
 } from "react-native";
 import shallow from "zustand/shallow";
 import { credStore } from "../stores/credStore";
+
 import { db } from "../stores/database";
 import * as RootNavigation from "../util/RootNavigation";
 import showToast from "../util/showToast";
@@ -32,7 +33,7 @@ const STATUS_BAR_HEIGHT = StatusBar.currentHeight;
 const WINDOW_HEIGHT = Dimensions.get("window").height;
 const BOTTOM_BAR_HEIGHT = SCREEN_HEIGHT - WINDOW_HEIGHT + STATUS_BAR_HEIGHT;
 
-export default function BottomProfile({ avatarUri, name, notifNumber }) {
+export default function BottomProfile({ name, notifNumber }) {
   // Last time synced
   const [lastSync, setLastSync, uniqueKey] = credStore(
     (s) => [s.lastSync, s.setLastSync, s.uniqueKey],
@@ -41,6 +42,22 @@ export default function BottomProfile({ avatarUri, name, notifNumber }) {
 
   // State of the modal for image upload
   const [visible, setVisible] = React.useState(false);
+
+  const [avatarUri, setAvatarUri] = credStore((s) => [
+    s.avatarUri,
+    s.setAvatarUri,
+  ]);
+
+  React.useEffect(async () => {
+    const res = await fetch(`${env.BACKEND_URL}/avatar_location`, {
+      method: "GET",
+      headers: {
+        "X-Key": uniqueKey,
+      },
+    });
+    const data = await res.json();
+    setAvatarUri(`${env.BACKEND_URL}/${data["avatar_url"]}`);
+  }, [visible]);
 
   // This use effect runs periodically and updates the 'last sync' status
   // it's a little bit finnicky ... make sure there is some data in the db
@@ -175,7 +192,9 @@ export default function BottomProfile({ avatarUri, name, notifNumber }) {
         <Pressable onPress={handleAvatarClick}>
           <Avatar
             source={{
-              uri: avatarUri,
+              uri:
+                avatarUri ||
+                "https://akveo.github.io/react-native-ui-kitten/docs/assets/playground-build/static/media/icon.a78e4b51.png",
             }}
           />
         </Pressable>

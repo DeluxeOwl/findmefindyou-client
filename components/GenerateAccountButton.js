@@ -35,13 +35,25 @@ export default function GenerateAccountButton({ text }) {
       return;
     }
 
-    // TODO: send request to backend
+    try {
+      await fetch(`${env.BACKEND_URL}/create_account`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          display_name: displayName,
+          unique_key: uniqueKey,
+        }), // body data type must match "Content-Type" header
+      });
+      // Set the items in the secure store
+      await SecureStore.setItemAsync("displayName", displayName);
+      await SecureStore.setItemAsync("uniqueKey", uniqueKey);
 
-    // Set the items in the secure store
-    await SecureStore.setItemAsync("displayName", displayName);
-    await SecureStore.setItemAsync("uniqueKey", uniqueKey);
-
-    await fetchCreds();
+      await fetchCreds();
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
