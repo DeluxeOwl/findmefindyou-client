@@ -48,13 +48,14 @@ export default function BottomProfile({ avatarUri, name, notifNumber }) {
     // Needs plugin for relative time
     dayjs.extend(relativeTime);
 
+    // TODO: fix promise rejection at _array[0]
     const id = setInterval(() => {
       db.transaction((tx) => {
         tx.executeSql(
           `select timestamp from coordinates order by timestamp desc limit 1`,
           [],
           (_, { rows: { _array } }) =>
-            setLastSync(dayjs(_array[0]["timestamp"]).toNow(true))
+            setLastSync(dayjs(_array[0]?.timestamp).toNow(true))
         );
       });
     }, 30000);
