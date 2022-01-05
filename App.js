@@ -3,8 +3,6 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { ApplicationProvider, IconRegistry } from "@ui-kitten/components";
 import { EvaIconsPack } from "@ui-kitten/eva-icons";
-import dayjs from "dayjs";
-import * as SQLite from "expo-sqlite";
 import { StatusBar } from "expo-status-bar";
 import React from "react";
 import Toast from "react-native-toast-message";
@@ -14,22 +12,20 @@ import LoadingScreen from "./components/LoadingScreen";
 import MapScreen from "./components/MapScreen";
 import NotificationScreen from "./components/NotificationScreen";
 import { credStore } from "./stores/credStore";
+import { db } from "./stores/database";
 import { navigationRef } from "./util/RootNavigation";
 import toastConfig from "./util/toastConfig";
-// For navigation
+
 const Stack = createNativeStackNavigator();
 
-import { db } from "./stores/database";
-
-// TODO: clear up comments
 export default function App() {
   const { displayName, uniqueKey, fetchCreds } = credStore();
-  // const [data, setData] = React.useState(null);
+  const [data, setData] = React.useState(null);
 
-  // React.useEffect(() => {
-  //   console.log("App.js ⟶ rerender: ", displayName, uniqueKey);
-  //   // console.log(JSON.stringify(data, null, 2));
-  // });
+  React.useEffect(() => {
+    console.log("App.js ⟶ rerender: ", displayName, uniqueKey);
+    console.log(JSON.stringify(data, null, 2));
+  });
 
   React.useEffect(async () => {
     // Use this to delete the items from the store
@@ -45,13 +41,20 @@ export default function App() {
       );    
       `);
     });
-    // db.transaction((tx) => {
-    //   tx.executeSql(
-    //     `select * from coordinates;`,
-    //     [],
-    //     (_, { rows: { _array } }) => setData(_array)
-    //   );
-    // });
+  }, []);
+
+  // Print the database once every 30s
+  React.useEffect(() => {
+    const intervalID = setInterval(() => {
+      db.transaction((tx) => {
+        tx.executeSql(
+          `select * from coordinates;`,
+          [],
+          (_, { rows: { _array } }) => setData(_array)
+        );
+      });
+    }, 30000);
+    return () => clearInterval(intervalID);
   }, []);
 
   return (

@@ -6,9 +6,34 @@ import * as TaskManager from "expo-task-manager";
 import React from "react";
 import { StyleSheet } from "react-native";
 import showToast from "../util/showToast";
+import { db } from "../stores/database";
 
 const LOCATION_TASK_NAME = "background-location-task";
+const FOREGROUND_LOCATION_SECONDS = 30;
 
+// Function to print and insert the location in the db
+const insertLocation = (locationObject) => {
+  const latitude = locationObject?.coords.latitude;
+  const longitude = locationObject?.coords.longitude;
+  const timestamp = dayjs(locationObject?.timestamp)
+    .format("YYYY-MM-DD HH:mm:ss.SSS")
+    .toString();
+
+  console.log(
+    `latitude:${latitude} longitude:${longitude} timestamp:${timestamp}`
+  );
+  db.transaction((tx) => {
+    tx.executeSql(
+      `
+            insert into coordinates (timestamp, latitude, longitude)
+            values (?, ?, ?)
+            `,
+      [timestamp, latitude, longitude]
+    );
+  });
+};
+
+// Apparently, it runs in the background 'a few times' each hour
 TaskManager.defineTask(LOCATION_TASK_NAME, ({ data: { locations }, error }) => {
   if (error) {
     console.log(error.message);
@@ -17,15 +42,7 @@ TaskManager.defineTask(LOCATION_TASK_NAME, ({ data: { locations }, error }) => {
 
   console.log("⟶ Location info ----------");
   locations.forEach((locationObject) => {
-    const latitude = locationObject?.coords.latitude;
-    const longitude = locationObject?.coords.longitude;
-    const timestamp = dayjs(locationObject?.timestamp)
-      .format("YYYY-MM-DD HH:mm:ss.SSS")
-      .toString();
-
-    console.log(
-      `latitude:${latitude} longitude:${longitude} timestamp:${timestamp}`
-    );
+    insertLocation(locationObject);
   });
 });
 
@@ -33,14 +50,28 @@ export default function SendDataToggle() {
   const [toggled, setToggled] = React.useState(false);
   const [statusBg, requestPermissionBg] = Location.useBackgroundPermissions();
   const [statusFg, requestPermissionFg] = Location.useForegroundPermissions();
+
   // Get the location toggle from the secure store and set the state
   React.useEffect(async () => {
     const storedToggle =
       (await SecureStore.getItemAsync("collectLocationBg")) === "true"
         ? true
         : false;
-    // console.log("SendDataToggle.js ⟶ found location toggle:", storedToggle);
     setToggled(storedToggle);
+  }, []);
+
+  // Get location data while the app is in foreground periodically
+  React.useEffect(async () => {
+    const foregroundLocationInterval = setInterval(async () => {
+      try {
+        const locationObject = await Location.getCurrentPositionAsync();
+        insertLocation(locationObject);
+      } catch (error) {
+        console.log(error.message);
+      }
+    }, FOREGROUND_LOCATION_SECONDS * 1000);
+
+    return () => clearInterval(foregroundLocationInterval);
   }, []);
 
   const toggleLocationCollection = async () => {
@@ -70,10 +101,12 @@ export default function SendDataToggle() {
     );
     // if the next value is true, start the task, otherwise stop it
     if (toggleNextVal) {
+      console.log("⟶ Starting location collection ...");
       await Location.startLocationUpdatesAsync(LOCATION_TASK_NAME, {
         accuracy: Location.Accuracy.High,
       });
     } else {
+      console.log("⟶ Stopping location collection ...");
       await Location.stopLocationUpdatesAsync(LOCATION_TASK_NAME);
     }
     // finally, update the UI
