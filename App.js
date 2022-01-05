@@ -40,24 +40,10 @@ export default function App() {
       tx.executeSql(`
       create table if not exists coordinates (
           timestamp text not null,
-          coord_x real not null,
-          coord_y real not null
+          latitude real not null,
+          longitude real not null
       );    
       `);
-      // Insert random values
-      // for (let i = 0; i < 4; i++) {
-      //   tx.executeSql(
-      //     `
-      //         insert into coordinates (timestamp, coord_x, coord_y)
-      //         values (?, ?, ?)
-      //         `,
-      //     [
-      //       dayjs().format("YYYY-MM-DD HH:mm:ss.SSS").toString(),
-      //       Number((Math.random() * 121 - 60).toFixed(7)),
-      //       Number((Math.random() * 121 - 60).toFixed(7)),
-      //     ]
-      //   );
-      // }
     });
     // db.transaction((tx) => {
     //   tx.executeSql(

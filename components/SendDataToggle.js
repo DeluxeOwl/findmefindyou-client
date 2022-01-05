@@ -1,4 +1,5 @@
 import { Layout, Toggle } from "@ui-kitten/components";
+import dayjs from "dayjs";
 import * as Location from "expo-location";
 import * as SecureStore from "expo-secure-store";
 import * as TaskManager from "expo-task-manager";
@@ -14,21 +15,31 @@ TaskManager.defineTask(LOCATION_TASK_NAME, ({ data: { locations }, error }) => {
     return;
   }
 
-  console.log(locations);
+  console.log("⟶ Location info ----------");
+  locations.forEach((locationObject) => {
+    const latitude = locationObject?.coords.latitude;
+    const longitude = locationObject?.coords.longitude;
+    const timestamp = dayjs(locationObject?.timestamp)
+      .format("YYYY-MM-DD HH:mm:ss.SSS")
+      .toString();
+
+    console.log(
+      `latitude:${latitude} longitude:${longitude} timestamp:${timestamp}`
+    );
+  });
 });
 
 export default function SendDataToggle() {
   const [toggled, setToggled] = React.useState(false);
   const [statusBg, requestPermissionBg] = Location.useBackgroundPermissions();
   const [statusFg, requestPermissionFg] = Location.useForegroundPermissions();
-
   // Get the location toggle from the secure store and set the state
   React.useEffect(async () => {
     const storedToggle =
       (await SecureStore.getItemAsync("collectLocationBg")) === "true"
         ? true
         : false;
-    console.log("SendDataToggle.js ⟶ found location toggle:", storedToggle);
+    // console.log("SendDataToggle.js ⟶ found location toggle:", storedToggle);
     setToggled(storedToggle);
   }, []);
 
