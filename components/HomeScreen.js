@@ -7,10 +7,8 @@ import SendDataToggle from "./SendDataToggle";
 import { credStore } from "../stores/credStore";
 import * as SecureStore from "expo-secure-store";
 
-
 export default function HomeScreen({ navigation }) {
   const displayName = credStore((s) => s.displayName);
-  
 
   const deleteIDS = async () => {
     await SecureStore.deleteItemAsync("displayName");
@@ -25,10 +23,7 @@ export default function HomeScreen({ navigation }) {
         <AddUserID />
         <SendDataToggle />
         <Divider />
-        <BottomProfile
-          name={displayName}
-          notifNumber={1}
-        />
+        <BottomProfile name={displayName} notifNumber={1} />
         <Button onPress={deleteIDS}>Delete account</Button>
       </Layout>
     </React.Fragment>

@@ -19,6 +19,8 @@ TaskManager.defineTask(LOCATION_TASK_NAME, ({ data: { locations }, error }) => {
 
 export default function SendDataToggle() {
   const [toggled, setToggled] = React.useState(false);
+  const [statusBg, requestPermissionBg] = Location.useBackgroundPermissions();
+  const [statusFg, requestPermissionFg] = Location.useForegroundPermissions();
 
   // Get the location toggle from the secure store and set the state
   React.useEffect(async () => {
@@ -30,52 +32,48 @@ export default function SendDataToggle() {
     setToggled(storedToggle);
   }, []);
 
-  const requestPermissions = async () => {
-    const { status } = await Location.requestBackgroundPermissionsAsync();
-    if (status === "granted") {
-      await Location.startLocationUpdatesAsync(LOCATION_TASK_NAME, {
-        accuracy: Location.Accuracy.High,
-      });
+  const toggleLocationCollection = async () => {
+    // Ask for location permissions
+    if (statusFg.granted === false || statusBg.granted === false) {
+      try {
+        await requestPermissionFg();
+        await requestPermissionBg();
+      } catch (error) {
+        console.log(error);
+        showToast({
+          type: "error",
+          topText: "Location error",
+          bottomText: "Location is required at all times",
+        });
+        return;
+      }
     }
-  };
 
-  // You better read through this code to understand
-  const onActiveCheckedChange = async () => {
     // get the value of the next toggle
     const toggleNextVal = !toggled;
 
-    // Ask for permission to collect location information in the bg
-    const { status } = await Location.requestBackgroundPermissionsAsync();
-    if (status === "granted") {
-      // set the nextval in store
-      await SecureStore.setItemAsync(
-        "collectLocationBg",
-        toggleNextVal.toString()
-      );
-      // if the next value is true, start the task, otherwise stop it
-      if (toggleNextVal) {
-        await Location.startLocationUpdatesAsync(LOCATION_TASK_NAME, {
-          accuracy: Location.Accuracy.High,
-        });
-      } else {
-        await Location.stopLocationUpdatesAsync(LOCATION_TASK_NAME);
-      }
-      // finally, update the UI
-      setToggled((t) => toggleNextVal);
-    } else {
-      showToast({
-        type: "error",
-        topText: "Error",
-        bottomText: "Need location permission",
+    // set the nextval in store
+    await SecureStore.setItemAsync(
+      "collectLocationBg",
+      toggleNextVal.toString()
+    );
+    // if the next value is true, start the task, otherwise stop it
+    if (toggleNextVal) {
+      await Location.startLocationUpdatesAsync(LOCATION_TASK_NAME, {
+        accuracy: Location.Accuracy.High,
       });
+    } else {
+      await Location.stopLocationUpdatesAsync(LOCATION_TASK_NAME);
     }
+    // finally, update the UI
+    setToggled((t) => toggleNextVal);
   };
   return (
     <Layout styles={styles.container}>
       <Toggle
         style={styles.toggle}
         checked={toggled}
-        onChange={onActiveCheckedChange}
+        onChange={toggleLocationCollection}
       >
         Send location data in background
       </Toggle>
