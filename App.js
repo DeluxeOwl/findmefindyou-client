@@ -15,6 +15,7 @@ import { credStore } from "./stores/credStore";
 import { db } from "./stores/database";
 import { navigationRef } from "./util/RootNavigation";
 import toastConfig from "./util/toastConfig";
+import env from "./env";
 
 const Stack = createNativeStackNavigator();
 
@@ -24,7 +25,6 @@ export default function App() {
 
   React.useEffect(() => {
     console.log("App.js ⟶ rerender: ", displayName, uniqueKey);
-    console.log(JSON.stringify(data, null, 2));
   });
 
   React.useEffect(async () => {
@@ -43,7 +43,7 @@ export default function App() {
     });
   }, []);
 
-  // Print the database once every 30s
+  // TODO: Get the latest data periodically from the local db
   React.useEffect(() => {
     const intervalID = setInterval(() => {
       db.transaction((tx) => {
@@ -53,9 +53,17 @@ export default function App() {
           (_, { rows: { _array } }) => setData(_array)
         );
       });
-    }, 30000);
+    }, env.UPDATE_REMOTE_DB_INTERVAL_SECONDS * 1000);
     return () => clearInterval(intervalID);
   }, []);
+
+  // TODO: Send the data to the backend
+  React.useEffect(() => {
+    if (!data) {
+      return;
+    }
+    console.log(JSON.stringify(data, null, 2));
+  }, [data]);
 
   return (
     <React.Fragment>
