@@ -2,17 +2,19 @@ import { ListItem } from "@ui-kitten/components";
 import React from "react";
 import NotificationAcceptDeleteButtons from "./NotificationAcceptDeleteButtons";
 import UserIcon from "./UserIcon";
+import env from "../env";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+dayjs.extend(relativeTime);
 
 export default function NotificationItem({ item, index }) {
   return (
     <ListItem
-      title={`${item.title} ${index + 1}`}
-      description={`${item.description} ${Math.floor(
-        Math.random() * 14 + 1
-      )} hours ago.`}
-      accessoryLeft={<UserIcon uri={item.uri} />}
+      title={`${item.display_name}`}
+      description={`sent ${dayjs(item.sent_at).toNow(true)} ago`}
+      accessoryLeft={<UserIcon uri={`${env.BACKEND_URL}/${item.avatar_url}`} />}
       accessoryRight={
-        <NotificationAcceptDeleteButtons requestID={`${index + 1}`} />
+        <NotificationAcceptDeleteButtons friendName={`${item.display_name}`} />
       }
     />
   );

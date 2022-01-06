@@ -2,19 +2,19 @@ import { Button, Icon } from "@ui-kitten/components";
 import React from "react";
 import showToast from "../util/showToast";
 
-// TODO: add more parameters, such as username
-export default function NotificationAcceptDeleteButtons({ requestID }) {
+// TODO: api calls to delete
+export default function NotificationAcceptDeleteButtons({ friendName }) {
   const handleAccept = () => {
     showToast({
       topText: "Success",
-      bottomText: `Accepted request from User ${requestID + 1}`,
+      bottomText: `Accepted request from ${friendName}`,
       type: "success",
     });
   };
   const handleDecline = () => {
     showToast({
       topText: "Declined",
-      bottomText: `Declined request from User ${requestID + 1}`,
+      bottomText: `Declined request from ${friendName}`,
       type: "error",
     });
   };
