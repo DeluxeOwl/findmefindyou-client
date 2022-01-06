@@ -18,6 +18,6 @@ export default function useFriends() {
   return {
     pendingFriends: data,
     isLoading: !error && !data,
-    refetchFriends: () => mutate(pendingFriendsEndpoint),
+    refetchFriends: () => mutate([pendingFriendsEndpoint, uniqueKey]),
   };
 }
