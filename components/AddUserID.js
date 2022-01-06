@@ -37,6 +37,7 @@ export default function AddUserID() {
           friend_name: value,
         }),
       });
+
       showToast({
         topText: "Info",
         type: "info",
