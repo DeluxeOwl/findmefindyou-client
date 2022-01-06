@@ -4,14 +4,14 @@ import { StyleSheet } from "react-native";
 
 import showToast from "../util/showToast";
 // TODO: add more parameters, such as username
-export default function UserDeleteButton({ userID }) {
+export default function UserDeleteButton({ display_name }) {
   // State of the modal
   const [visible, setVisible] = React.useState(false);
 
   const handleDelete = () => {
     showToast({
       topText: "Deleted",
-      bottomText: `Deleted User ${userID + 1}`,
+      bottomText: `Deleted User ${display_name}`,
       type: "error",
     });
     setVisible(false);

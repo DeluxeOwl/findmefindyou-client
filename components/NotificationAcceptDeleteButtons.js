@@ -1,5 +1,5 @@
+import { Button, Icon } from "@ui-kitten/components";
 import React from "react";
-import { Icon, Button } from "@ui-kitten/components";
 import showToast from "../util/showToast";
 
 // TODO: add more parameters, such as username

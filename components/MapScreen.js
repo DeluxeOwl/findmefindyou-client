@@ -16,7 +16,9 @@ const oneWeekAgo = new Date(
 );
 
 export default function MapScreen({ route, navigation }) {
-  const { userID } = route.params;
+  // TODO: pass display_name & avatar url to Map and fetch the coordinates
+  const { display_name, avatar_url } = route.params;
+
   const [range, setRange] = React.useState({ startDate: now, endDate: null });
 
   // Format the date to our standard.
@@ -39,7 +41,7 @@ export default function MapScreen({ route, navigation }) {
   return (
     <Layout style={{ flex: 1, justifyContent: "flex-end" }} level="1">
       <Layout style={styles.mapContainer}>
-        <Map />
+        <Map avatar_url={avatar_url} />
       </Layout>
       <Divider />
       <Layout style={styles.dateContainer}>

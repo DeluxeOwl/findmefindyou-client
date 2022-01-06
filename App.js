@@ -57,12 +57,13 @@ export default function App() {
     return () => clearInterval(intervalID);
   }, []);
 
-  // TODO: Send the data to the backend
+  // TODO: Send the data to the backend, backend should return the latest sent data
+  // first and you store it in the state or as a ref (no rerender)
   React.useEffect(() => {
     if (!data) {
       return;
     }
-    console.log(JSON.stringify(data, null, 2));
+    // console.log(JSON.stringify(data, null, 2));
   }, [data]);
 
   return (

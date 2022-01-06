@@ -1,25 +1,35 @@
 import { ListItem } from "@ui-kitten/components";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
 import React from "react";
-import UserIcon from "./UserIcon";
-import UserDeleteButton from "./UserDeleteButton";
+import env from "../env";
 import * as RootNavigation from "../util/RootNavigation";
+import UserDeleteButton from "./UserDeleteButton";
+import UserIcon from "./UserIcon";
+
+dayjs.extend(relativeTime);
 
 export default function UserItem({ item, index }) {
   const handleNav = () => {
     RootNavigation.navigate("Map", {
-      userID: `${index + 1}`,
-      headerTitle: `Map: UserID ${index + 1}`,
+      display_name: `${item.display_name}`,
+      avatar_url: `${env.BACKEND_URL}/${item.avatar_url}`,
+      headerTitle: `Map: ${item.display_name}`,
     });
   };
 
   return (
     <ListItem
-      title={`${item.title} ${index + 1}`}
-      description={`${item.description} ${Math.floor(
-        Math.random() * 14 + 1
-      )} hours ago.`}
-      accessoryLeft={<UserIcon uri={item.uri} />}
-      accessoryRight={<UserDeleteButton userID={`${index + 1}`} />}
+      title={`${item.display_name}`}
+      description={
+        item.ts === null
+          ? "last seen: never"
+          : `last seen: ${dayjs(item.ts).toNow(true)} ago`
+      }
+      accessoryLeft={<UserIcon uri={`${env.BACKEND_URL}/${item.avatar_url}`} />}
+      accessoryRight={
+        <UserDeleteButton display_name={`${item.display_name}`} />
+      }
       onPress={handleNav}
     />
   );

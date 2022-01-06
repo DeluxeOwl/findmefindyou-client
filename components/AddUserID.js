@@ -4,7 +4,7 @@ import {
   Icon,
   Input,
   Layout,
-  Modal,
+  Modal
 } from "@ui-kitten/components";
 import React from "react";
 import { StyleSheet } from "react-native";

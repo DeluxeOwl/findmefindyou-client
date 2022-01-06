@@ -1,13 +1,13 @@
 import { Layout, Toggle } from "@ui-kitten/components";
-
 import * as Location from "expo-location";
 import * as SecureStore from "expo-secure-store";
 import * as TaskManager from "expo-task-manager";
 import React from "react";
 import { StyleSheet } from "react-native";
-import showToast from "../util/showToast";
-import insertLocation from "../util/insertLocation";
 import env from "../env";
+import insertLocation from "../util/insertLocation";
+import showToast from "../util/showToast";
+
 
 const LOCATION_TASK_NAME = "background-location-task";
 

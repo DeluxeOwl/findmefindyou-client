@@ -6,7 +6,7 @@ import MapView, { Marker, Polyline } from "react-native-maps";
 const latitude_REMOVE = 45.7650466;
 const longitude_REMOVE = 21.2165824;
 
-export default function Map() {
+export default function Map({ avatar_url }) {
   // TODO: remove this, should show loading screen when fetching data
   const isDataLoaded = true;
 
@@ -73,7 +73,9 @@ export default function Map() {
               >
                 <Image
                   source={{
-                    uri: "https://akveo.github.io/react-native-ui-kitten/docs/assets/playground-build/static/media/icon.a78e4b51.png",
+                    uri:
+                      avatar_url ||
+                      "https://akveo.github.io/react-native-ui-kitten/docs/assets/playground-build/static/media/icon.a78e4b51.png",
                   }}
                   style={{ height: 35, width: 35, borderRadius: 10 }}
                 />

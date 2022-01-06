@@ -1,8 +1,8 @@
 import { Layout, List } from "@ui-kitten/components";
 import React from "react";
 import { StyleSheet } from "react-native";
-import NotificationUserItem from "./NotificationUserItem";
 import { notificationStore } from "../stores/notificationStore";
+import NotificationUserItem from "./NotificationUserItem";
 
 export default function UserList() {
   const data = notificationStore((s) => s.data);

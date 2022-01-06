@@ -1,10 +1,10 @@
 import { Button, Card, Modal, Text } from "@ui-kitten/components";
+import * as SecureStore from "expo-secure-store";
 import React from "react";
 import { StyleSheet } from "react-native";
 import env from "../env.js";
-import showToast from "../util/showToast";
-import * as SecureStore from "expo-secure-store";
 import { credStore } from "../stores/credStore";
+import showToast from "../util/showToast";
 
 export default function GenerateAccountButton({ text }) {
   const [uniqueKey, setUniqueKey] = React.useState("");

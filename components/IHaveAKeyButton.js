@@ -1,9 +1,8 @@
 import { Button, Card, Input, Modal } from "@ui-kitten/components";
 import React from "react";
 import { StyleSheet } from "react-native";
-
 import showToast from "../util/showToast";
-import env from "../env.js";
+
 
 export default function IHaveAkeyButton({ text }) {
   const [uniqueKey, setUniqueKey] = React.useState("");
