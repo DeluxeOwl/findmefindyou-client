@@ -5,7 +5,7 @@ import {
   Icon,
   Layout,
   Modal,
-  Text
+  Text,
 } from "@ui-kitten/components";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -18,7 +18,7 @@ import {
   Pressable,
   StatusBar,
   StyleSheet,
-  View
+  View,
 } from "react-native";
 import shallow from "zustand/shallow";
 import env from "../env.js";
@@ -26,7 +26,6 @@ import { credStore } from "../stores/credStore";
 import { db } from "../stores/database";
 import * as RootNavigation from "../util/RootNavigation";
 import showToast from "../util/showToast";
-
 
 const SCREEN_HEIGHT = Dimensions.get("screen").height;
 const STATUS_BAR_HEIGHT = StatusBar.currentHeight;
@@ -86,6 +85,14 @@ export default function BottomProfile({ name, notifNumber }) {
   // some hook errors
   const handleNav = () => {
     RootNavigation.navigate("Notifications");
+  };
+
+  const handleSelfPress = () => {
+    RootNavigation.navigate("Map", {
+      display_name: name,
+      avatar_url: avatarUri,
+      headerTitle: `Your routes`,
+    });
   };
 
   // Asks for permission to use the camera
@@ -198,12 +205,16 @@ export default function BottomProfile({ name, notifNumber }) {
             }}
           />
         </Pressable>
+
         <View style={styles.authoringInfoContainer}>
-          <Text>{name}</Text>
+          <Pressable onPress={handleSelfPress}>
+            <Text>{name}</Text>
+          </Pressable>
           <Text appearance="hint" category="p2">
             {`Last sync: ${lastSync} ago`}
           </Text>
         </View>
+
         <Button
           style={styles.iconButton}
           appearance="ghost"

@@ -6,9 +6,12 @@ import AddUserID from "./AddUserID";
 import BottomProfile from "./BottomProfile";
 import SendDataToggle from "./SendDataToggle";
 import UserList from "./UserList";
+import usePendingFriends from "../hooks/usePendingFriends";
 
 export default function HomeScreen({ navigation }) {
   const displayName = credStore((s) => s.displayName);
+  const { pendingFriends } = usePendingFriends();
+  const notifNumber = pendingFriends?.length || 0;
 
   const deleteIDS = async () => {
     await SecureStore.deleteItemAsync("displayName");
@@ -23,7 +26,7 @@ export default function HomeScreen({ navigation }) {
         <AddUserID />
         <SendDataToggle />
         <Divider />
-        <BottomProfile name={displayName} notifNumber={1} />
+        <BottomProfile name={displayName} notifNumber={notifNumber} />
         <Button onPress={deleteIDS}>Delete account</Button>
       </Layout>
     </React.Fragment>
