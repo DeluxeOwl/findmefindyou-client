@@ -10,7 +10,7 @@ const fetcher = (url, uniqueKey) =>
 
 const pendingFriendsEndpoint = `${env.BACKEND_URL}/pending_friends`;
 
-export default function useFriends() {
+export default function usePendingFriends() {
   const { mutate } = useSWRConfig();
   const uniqueKey = credStore((s) => s.uniqueKey);
   const { data, error } = useSWR([pendingFriendsEndpoint, uniqueKey], fetcher);

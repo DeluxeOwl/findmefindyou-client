@@ -8,7 +8,6 @@ import env from "../env";
 import insertLocation from "../util/insertLocation";
 import showToast from "../util/showToast";
 
-
 const LOCATION_TASK_NAME = "background-location-task";
 
 // Apparently, it runs in the background 'a few times' each hour
@@ -20,12 +19,13 @@ TaskManager.defineTask(LOCATION_TASK_NAME, ({ data: { locations }, error }) => {
 
   console.log("⟶ Location info ----------");
   locations.forEach((locationObject) => {
-    insertLocation(locationObject);
+    insertLocation(locationObject, "bg task");
   });
 });
 
 export default function SendDataToggle() {
   const [toggled, setToggled] = React.useState(false);
+  const latestLocationTS = React.useRef(null);
   const [statusBg, requestPermissionBg] = Location.useBackgroundPermissions();
   const [statusFg, requestPermissionFg] = Location.useForegroundPermissions();
 
@@ -43,8 +43,16 @@ export default function SendDataToggle() {
     const foregroundLocationInterval = setInterval(async () => {
       try {
         const locationObject = await Location.getCurrentPositionAsync();
-        insertLocation(locationObject);
-      } catch (error) {}
+        console.log(
+          `ran interval, locationObject.timestamp: ${locationObject.timestamp}, latestLocationTS.current: ${latestLocationTS.current}`
+        );
+        if (locationObject.timestamp !== latestLocationTS.current) {
+          insertLocation(locationObject, "fg task");
+        }
+        latestLocationTS.current = locationObject.timestamp;
+      } catch (error) {
+        console.log(error);
+      }
     }, env.FOREGROUND_LOCATION_SECONDS * 1000);
 
     return () => clearInterval(foregroundLocationInterval);

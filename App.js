@@ -23,9 +23,9 @@ export default function App() {
   const { displayName, uniqueKey, fetchCreds } = credStore();
   const [data, setData] = React.useState(null);
 
-  React.useEffect(() => {
-    console.log("App.js ⟶ rerender: ", displayName, uniqueKey);
-  });
+  // React.useEffect(() => {
+  //   console.log("App.js ⟶ rerender: ", displayName, uniqueKey);
+  // });
 
   React.useEffect(async () => {
     // Use this to delete the items from the store
@@ -63,7 +63,7 @@ export default function App() {
     if (!data) {
       return;
     }
-    // console.log(JSON.stringify(data, null, 2));
+    console.log(JSON.stringify(data, null, 2));
   }, [data]);
 
   return (
