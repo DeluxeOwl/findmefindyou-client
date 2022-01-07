@@ -43,7 +43,6 @@ export default function App() {
     });
   }, []);
 
-  // TODO: Get the latest data periodically from the local db
   React.useEffect(() => {
     const intervalID = setInterval(() => {
       db.transaction((tx) => {
@@ -57,27 +56,35 @@ export default function App() {
     return () => clearInterval(intervalID);
   }, []);
 
-  // TODO: Send the data to the backend, backend should return the latest sent data
-  // first and you store it in the state or as a ref (no rerender)
   React.useEffect(() => {
     if (!data) {
       return;
     }
+
+    const coordBody = JSON.stringify(
+      data.reverse().filter((item, pos, arr) => {
+        return (
+          pos === 0 ||
+          item.latitude !== arr[pos - 1].latitude ||
+          item.longitude !== arr[pos - 1].longitude
+        );
+      })
+    );
     // the filter filters only be unique latitude and longitudes, no need to send
     // these duplicates values
-    console.log(
-      JSON.stringify(
-        data.reverse().filter((item, pos, arr) => {
-          return (
-            pos === 0 ||
-            item.latitude !== arr[pos - 1].latitude ||
-            item.longitude !== arr[pos - 1].longitude
-          );
-        }),
-        null,
-        2
-      )
-    );
+
+    const postBody = async () => {
+      console.log(`sending coord data to backend ...\n`);
+      await fetch(`${env.BACKEND_URL}/upload_coords`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Key": uniqueKey,
+        },
+        body: coordBody,
+      });
+    };
+    postBody().catch(console.log);
   }, [data]);
 
   return (
