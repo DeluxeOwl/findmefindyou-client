@@ -13,7 +13,8 @@ export default function NotifNumberButton() {
   const uniqueKey = credStore((s) => s.uniqueKey);
   const { data, error } = useSWR(
     [`${env.BACKEND_URL}/pending_friends_number`, uniqueKey],
-    fetcher
+    fetcher,
+    { refreshInterval: 10000 }
   );
 
   const handleNav = () => {
