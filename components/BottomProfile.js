@@ -26,13 +26,14 @@ import { credStore } from "../stores/credStore";
 import { db } from "../stores/database";
 import * as RootNavigation from "../util/RootNavigation";
 import showToast from "../util/showToast";
+import NotifNumberButton from "./NotifNumberButton.js";
 
 const SCREEN_HEIGHT = Dimensions.get("screen").height;
 const STATUS_BAR_HEIGHT = StatusBar.currentHeight;
 const WINDOW_HEIGHT = Dimensions.get("window").height;
 const BOTTOM_BAR_HEIGHT = SCREEN_HEIGHT - WINDOW_HEIGHT + STATUS_BAR_HEIGHT;
 
-export default function BottomProfile({ name, notifNumber }) {
+export default function BottomProfile({ name }) {
   // Last time synced
   const [lastSync, setLastSync, uniqueKey] = credStore(
     (s) => [s.lastSync, s.setLastSync, s.uniqueKey],
@@ -80,12 +81,6 @@ export default function BottomProfile({ name, notifNumber }) {
       clearInterval(id);
     };
   }, []);
-
-  // We're using a reference to the react navigator to avoid
-  // some hook errors
-  const handleNav = () => {
-    RootNavigation.navigate("Notifications");
-  };
 
   const handleSelfPress = () => {
     RootNavigation.navigate("Map", {
@@ -215,21 +210,7 @@ export default function BottomProfile({ name, notifNumber }) {
           </Text>
         </View>
 
-        <Button
-          style={styles.iconButton}
-          appearance="ghost"
-          status="basic"
-          accessoryLeft={
-            <Icon
-              fill={(notifNumber !== 0 && "red") || "gray"}
-              stroke={(notifNumber !== 0 && "red") || "gray"}
-              name="bell-outline"
-            />
-          }
-          onPress={handleNav}
-        >
-          {notifNumber === 0 ? "" : `${notifNumber} new`}
-        </Button>
+        <NotifNumberButton />
       </View>
     </Layout>
   );
