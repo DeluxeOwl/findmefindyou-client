@@ -30,29 +30,30 @@ export default function SendDataToggle() {
   const [statusFg, requestPermissionFg] = Location.useForegroundPermissions();
 
   // Get the location toggle from the secure store and set the state
-  React.useEffect(async () => {
-    const storedToggle =
-      (await SecureStore.getItemAsync("collectLocationBg")) === "true"
-        ? true
-        : false;
-    setToggled(storedToggle);
+  React.useEffect(() => {
+    const setToggleState = async () => {
+      const storedToggle =
+        (await SecureStore.getItemAsync("collectLocationBg")) === "true"
+          ? true
+          : false;
+      setToggled(storedToggle);
+    };
+    setToggleState().catch(console.log);
   }, []);
 
   // Get location data while the app is in foreground periodically
-  React.useEffect(async () => {
+  React.useEffect(() => {
     const foregroundLocationInterval = setInterval(async () => {
-      try {
-        const locationObject = await Location.getCurrentPositionAsync();
-        console.log(
-          `ran interval, locationObject.timestamp: ${locationObject.timestamp}, latestLocationTS.current: ${latestLocationTS.current}`
-        );
-        if (locationObject.timestamp !== latestLocationTS.current) {
-          insertLocation(locationObject, "fg task");
-        }
-        latestLocationTS.current = locationObject.timestamp;
-      } catch (error) {
-        console.log(error);
+      console.log("entered setInterval");
+
+      const locationObject = await Location.getCurrentPositionAsync();
+      console.log(
+        `ran interval, locationObject.timestamp: ${locationObject.timestamp}, latestLocationTS.current: ${latestLocationTS.current}`
+      );
+      if (locationObject.timestamp !== latestLocationTS.current) {
+        insertLocation(locationObject, "fg task");
       }
+      latestLocationTS.current = locationObject.timestamp;
     }, env.FOREGROUND_LOCATION_SECONDS * 1000);
 
     return () => clearInterval(foregroundLocationInterval);

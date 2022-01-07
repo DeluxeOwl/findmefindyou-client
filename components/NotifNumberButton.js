@@ -22,7 +22,7 @@ export default function NotifNumberButton() {
   };
 
   if (error) {
-    return <Text>error</Text>;
+    return <Spinner />;
   }
   if (!error && !data) {
     return <Spinner />;

@@ -27,9 +27,14 @@ export default function App() {
   //   console.log("App.js ⟶ rerender: ", displayName, uniqueKey);
   // });
 
-  React.useEffect(async () => {
-    // Use this to delete the items from the store
-    await fetchCreds();
+  React.useEffect(() => {
+    const fetchCredentials = async () => {
+      // Use this to delete the items from the store
+      await fetchCreds();
+    };
+
+    fetchCredentials().catch(console.log);
+
     // Create the table
     db.transaction((tx) => {
       // tx.executeSql("drop table coordinates");
@@ -61,15 +66,13 @@ export default function App() {
       return;
     }
 
-    const coordBody = JSON.stringify(
-      data.reverse().filter((item, pos, arr) => {
-        return (
-          pos === 0 ||
-          item.latitude !== arr[pos - 1].latitude ||
-          item.longitude !== arr[pos - 1].longitude
-        );
-      })
-    );
+    const coordBody = data.reverse().filter((item, pos, arr) => {
+      return (
+        pos === 0 ||
+        item.latitude !== arr[pos - 1].latitude ||
+        item.longitude !== arr[pos - 1].longitude
+      );
+    });
     // the filter filters only be unique latitude and longitudes, no need to send
     // these duplicates values
 
@@ -81,7 +84,7 @@ export default function App() {
           "Content-Type": "application/json",
           "X-Key": uniqueKey,
         },
-        body: coordBody,
+        body: JSON.stringify(coordBody),
       });
     };
     postBody().catch(console.log);

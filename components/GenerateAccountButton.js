@@ -15,19 +15,22 @@ export default function GenerateAccountButton({ text }) {
   const fetchCreds = credStore((s) => s.fetchCreds);
 
   // Fetch the credentials on component mount
-  React.useEffect(async () => {
-    try {
-      const creds = await fetch(`${env.BACKEND_URL}/init`);
-      const { display_name, unique_key } = await creds.json();
-      setDisplayName(display_name);
-      setUniqueKey(unique_key);
-    } catch (e) {
-      showToast({
-        type: "error",
-        topText: "Error",
-        bottomText: "Please restart the app",
-      });
-    }
+  React.useEffect(() => {
+    const fetchInitCreds = async () => {
+      try {
+        const creds = await fetch(`${env.BACKEND_URL}/init`);
+        const { display_name, unique_key } = await creds.json();
+        setDisplayName(display_name);
+        setUniqueKey(unique_key);
+      } catch (e) {
+        showToast({
+          type: "error",
+          topText: "Error",
+          bottomText: "Please restart the app",
+        });
+      }
+    };
+    fetchInitCreds().catch(console.log);
   }, []);
 
   const handleAccountCreation = async () => {

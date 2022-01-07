@@ -48,15 +48,18 @@ export default function BottomProfile({ name }) {
     s.setAvatarUri,
   ]);
 
-  React.useEffect(async () => {
-    const res = await fetch(`${env.BACKEND_URL}/avatar_location`, {
-      method: "GET",
-      headers: {
-        "X-Key": uniqueKey,
-      },
-    });
-    const data = await res.json();
-    setAvatarUri(`${env.BACKEND_URL}/${data["avatar_url"]}`);
+  React.useEffect(() => {
+    const fetchUrl = async () => {
+      const res = await fetch(`${env.BACKEND_URL}/avatar_location`, {
+        method: "GET",
+        headers: {
+          "X-Key": uniqueKey,
+        },
+      });
+      const data = await res.json();
+      setAvatarUri(`${env.BACKEND_URL}/${data["avatar_url"]}`);
+    };
+    fetchUrl().catch(console.log);
   }, [visible]);
 
   // This use effect runs periodically and updates the 'last sync' status
