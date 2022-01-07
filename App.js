@@ -52,7 +52,7 @@ export default function App() {
     const intervalID = setInterval(() => {
       db.transaction((tx) => {
         tx.executeSql(
-          `select * from coordinates order by ROWID desc LIMIT 50;`,
+          `select * from coordinates order by ROWID desc LIMIT 5;`,
           [],
           (_, { rows: { _array } }) => setData(_array)
         );
