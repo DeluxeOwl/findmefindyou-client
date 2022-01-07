@@ -6,13 +6,19 @@ import AddUserID from "./AddUserID";
 import BottomProfile from "./BottomProfile";
 import SendDataToggle from "./SendDataToggle";
 import UserList from "./UserList";
+import * as RootNavigation from "../util/RootNavigation";
 
 export default function HomeScreen({ navigation }) {
-  const displayName = credStore((s) => s.displayName);
+  const [displayName, fetchCreds] = credStore((s) => [
+    s.displayName,
+    s.fetchCreds,
+  ]);
 
   const deleteIDS = async () => {
     await SecureStore.deleteItemAsync("displayName");
     await SecureStore.deleteItemAsync("uniqueKey");
+    await fetchCreds();
+    RootNavigation.navigate("InitialScreen");
   };
 
   return (
