@@ -6,44 +6,39 @@ import MapView, { Marker, Polyline } from "react-native-maps";
 const latitude_REMOVE = 45.7650466;
 const longitude_REMOVE = 21.2165824;
 
-export default function Map({ avatar_url }) {
+export default function Map({ avatar_url, coords }) {
   // TODO: remove this, should show loading screen when fetching data
   const isDataLoaded = true;
+  console.log("coords");
+  console.log(coords);
 
   const [markers, setMarkers] = React.useState([]);
   const [polylineCoords, setPolylineCoords] = React.useState([]);
   React.useEffect(() => {
-    setMarkers((markers) => [
-      ...markers,
-      {
-        title: "Start",
-        latlng: {
-          latitude: latitude_REMOVE,
-          longitude: longitude_REMOVE,
-        },
-      },
-    ]);
-    setPolylineCoords((polylineCoords) => [
-      ...polylineCoords,
-      {
-        latitude: latitude_REMOVE,
-        longitude: longitude_REMOVE,
-      },
-    ]);
-  }, []);
-
-  // TODO: remove this (testing only)
-  const handleMapPress = (e) => {
-    const newMarker = {
-      title: `Marker ${markers.length}`,
-      latlng: { ...e.nativeEvent.coordinate },
-    };
-    setMarkers((markers) => [...markers, newMarker]);
-    setPolylineCoords((polylineCoords) => [
-      ...polylineCoords,
-      { ...newMarker.latlng },
-    ]);
-  };
+    setMarkers(
+      coords.map((c) => {
+        return {
+          title: "title",
+          ts: c.ts,
+          latlng: {
+            latitude: c.latitude,
+            longitude: c.longitude,
+          },
+        };
+      })
+    );
+    setPolylineCoords(
+      coords.map((c) => {
+        return {
+          latitude: c.latitude,
+          longitude: c.longitude,
+        };
+      })
+    );
+    console.log("markers");
+    console.log(markers);
+    console.log(polylineCoords);
+  }, [coords]);
 
   return (
     <View style={styles.container}>
@@ -58,7 +53,6 @@ export default function Map({ avatar_url }) {
             latitudeDelta: 0.0922,
             longitudeDelta: 0.0421,
           }}
-          onPress={handleMapPress}
         >
           {markers.map((marker, index) => {
             return (

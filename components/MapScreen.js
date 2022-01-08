@@ -3,6 +3,8 @@ import dayjs from "dayjs";
 import React from "react";
 import { StyleSheet } from "react-native";
 import Map from "./Map";
+import env from "../env";
+import { credStore } from "../stores/credStore";
 
 // You can only see the coordinates for a user from
 // the past week until today, used in RangeDatepicker
@@ -18,9 +20,10 @@ const oneWeekAgo = new Date(
 export default function MapScreen({ route, navigation }) {
   // TODO: pass display_name & avatar url to Map and fetch the coordinates
   const { display_name, avatar_url } = route.params;
+  const uniqueKey = credStore((s) => s.uniqueKey);
 
   const [range, setRange] = React.useState({ startDate: now, endDate: null });
-
+  const [coords, setCoords] = React.useState([]);
   // Format the date to our standard.
   React.useEffect(() => {
     let startDateString = "";
@@ -36,12 +39,33 @@ export default function MapScreen({ route, navigation }) {
     }
     console.log(`MapScreen.js ⟶ start: ${startDateString}`);
     console.log(`MapScreen.js ⟶ end: ${endDateString}`);
-  }, [range]);
 
+    //Request new coords on date change
+
+    const body = {
+      friend_name: display_name,
+      start_date: startDateString,
+      end_date: endDateString,
+    };
+    const getFriendCoords = async () => {
+      console.log(`sending getting coords of friend ...\n`);
+      let res = await fetch(`${env.BACKEND_URL}/friend_coords`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Key": uniqueKey,
+        },
+        body: JSON.stringify(body),
+      });
+      const data = await res.json();
+      setCoords(data);
+    };
+    getFriendCoords().catch(console.log);
+  }, [range]);
   return (
     <Layout style={{ flex: 1, justifyContent: "flex-end" }} level="1">
       <Layout style={styles.mapContainer}>
-        <Map avatar_url={avatar_url} />
+        <Map avatar_url={avatar_url} coords={coords} />
       </Layout>
       <Divider />
       <Layout style={styles.dateContainer}>
