@@ -20,7 +20,7 @@ const oneWeekAgo = new Date(
 export default function MapScreen({ route, navigation }) {
   // TODO: pass display_name & avatar url to Map and fetch the coordinates
   const { display_name, avatar_url } = route.params;
-  const uniqueKey = credStore((s) => s.uniqueKey);
+  const [uniqueKey, myName] = credStore((s) => [s.uniqueKey, s.displayName]);
 
   const [range, setRange] = React.useState({ startDate: now, endDate: null });
   const [coords, setCoords] = React.useState([]);
@@ -42,14 +42,18 @@ export default function MapScreen({ route, navigation }) {
 
     //Request new coords on date change
 
-    const body = {
-      friend_name: display_name,
+    let body = {
       start_date: startDateString,
       end_date: endDateString,
     };
-    const getFriendCoords = async () => {
-      console.log(`sending getting coords of friend ...\n`);
-      let res = await fetch(`${env.BACKEND_URL}/friend_coords`, {
+    let coordsUrl = `${env.BACKEND_URL}/my_coords`;
+    if (myName !== display_name) {
+      body = { friend_name: display_name, ...body };
+      coordsUrl = `${env.BACKEND_URL}/friend_coords`;
+    }
+    const getCoords = async () => {
+      console.log(`sending getting coords of friend or myself...\n`);
+      let res = await fetch(coordsUrl, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -60,7 +64,7 @@ export default function MapScreen({ route, navigation }) {
       const data = await res.json();
       setCoords(data);
     };
-    getFriendCoords().catch(console.log);
+    getCoords().catch(console.log);
   }, [range]);
   return (
     <Layout style={{ flex: 1, justifyContent: "flex-end" }} level="1">

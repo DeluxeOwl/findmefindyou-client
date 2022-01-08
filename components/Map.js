@@ -2,9 +2,10 @@ import * as React from "react";
 import { Dimensions, Image, StyleSheet, Text, View } from "react-native";
 import MapView, { Marker, Polyline } from "react-native-maps";
 
-// TODO: remove these hardcoded values
-const latitude_REMOVE = 45.7650466;
-const longitude_REMOVE = 21.2165824;
+const LATITUDE_FALLBACK = 45.7650466;
+const LONGITUDE_FALLBACK = 21.2165824;
+const LATITUDE_DELTA = 0.0922;
+const LONGITUDE_DELTA = 0.0421;
 
 export default function Map({ avatar_url, coords }) {
   // TODO: remove this, should show loading screen when fetching data
@@ -14,7 +15,13 @@ export default function Map({ avatar_url, coords }) {
 
   const [markers, setMarkers] = React.useState([]);
   const [polylineCoords, setPolylineCoords] = React.useState([]);
+  const [initialRegion, setInitialRegion] = React.useState({
+    latitude: LATITUDE_FALLBACK,
+    longitude: LONGITUDE_FALLBACK,
+  });
   React.useEffect(() => {
+    console.log("coords in useeffect");
+    console.log(coords);
     setMarkers(
       coords.map((c) => {
         return {
@@ -35,9 +42,17 @@ export default function Map({ avatar_url, coords }) {
         };
       })
     );
+    if (coords.length > 0) {
+      setInitialRegion({
+        latitude: coords[0].latitude,
+        longitude: coords[0].longitude,
+      });
+    }
+
     console.log("markers");
     console.log(markers);
     console.log(polylineCoords);
+    console.log(initialRegion);
   }, [coords]);
 
   return (
@@ -48,10 +63,10 @@ export default function Map({ avatar_url, coords }) {
         <MapView
           style={styles.map}
           initialRegion={{
-            latitude: latitude_REMOVE,
-            longitude: longitude_REMOVE,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421,
+            latitude: initialRegion.latitude,
+            longitude: initialRegion.longitude,
+            latitudeDelta: LATITUDE_DELTA,
+            longitudeDelta: LONGITUDE_DELTA,
           }}
         >
           {markers.map((marker, index) => {
