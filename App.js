@@ -16,6 +16,7 @@ import { db } from "./stores/database";
 import { navigationRef } from "./util/RootNavigation";
 import toastConfig from "./util/toastConfig";
 import env from "./env";
+import * as LocalAuthentication from "expo-local-authentication";
 
 const Stack = createNativeStackNavigator();
 
@@ -90,6 +91,39 @@ export default function App() {
     postBody().catch(console.log);
   }, [data]);
 
+  const [state, setState] = React.useState({
+    compatible: false,
+    fingerprints: false,
+    result: "",
+  });
+
+  checkDeviceForHardware = async () => {
+    let compatible = await LocalAuthentication.hasHardwareAsync();
+    setState({ ...state, compatible: compatible });
+  };
+
+  checkForFingerprints = async () => {
+    let fingerprints = await LocalAuthentication.isEnrolledAsync();
+    setState({ ...state, fingerprints: fingerprints });
+  };
+
+  scanFingerprint = async () => {
+    let result = await LocalAuthentication.authenticateAsync(
+      "Scan your finger."
+    );
+    console.log("Scan Result:", result);
+    setState({
+      ...state,
+      result: result,
+    });
+  };
+  React.useEffect(() => {
+    checkDeviceForHardware().then(checkForFingerprints).then(scanFingerprint);
+  }, []);
+
+  if (!state?.result?.success) {
+    return null;
+  }
   return (
     <React.Fragment>
       <StatusBar style="auto" />

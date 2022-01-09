@@ -21,7 +21,7 @@ export default function MapScreen({ route, navigation }) {
   // TODO: pass display_name & avatar url to Map and fetch the coordinates
   const { display_name, avatar_url } = route.params;
   const [uniqueKey, myName] = credStore((s) => [s.uniqueKey, s.displayName]);
-
+  const [avatarUrl, setAvatarUrl] = React.useState(avatar_url);
   const [range, setRange] = React.useState({ startDate: now, endDate: null });
   const [coords, setCoords] = React.useState([]);
   // Format the date to our standard.
@@ -41,7 +41,6 @@ export default function MapScreen({ route, navigation }) {
     console.log(`MapScreen.js ⟶ end: ${endDateString}`);
 
     //Request new coords on date change
-
     let body = {
       start_date: startDateString,
       end_date: endDateString,
@@ -50,6 +49,18 @@ export default function MapScreen({ route, navigation }) {
     if (myName !== display_name) {
       body = { friend_name: display_name, ...body };
       coordsUrl = `${env.BACKEND_URL}/friend_coords`;
+      const getFriendUrl = async () => {
+        let res = await fetch(`${env.BACKEND_URL}/friends`, {
+          method: "GET",
+          headers: {
+            "X-Key": uniqueKey,
+          },
+        }).then((res) => res.json());
+        let friend = res.find((e) => e.display_name == display_name);
+        console.log("friend", friend);
+        setAvatarUrl(`${env.BACKEND_URL}/${friend.avatar_url}`);
+      };
+      getFriendUrl();
     }
     const getCoords = async () => {
       console.log(`sending getting coords of friend or myself...\n`);
@@ -69,7 +80,7 @@ export default function MapScreen({ route, navigation }) {
   return (
     <Layout style={{ flex: 1, justifyContent: "flex-end" }} level="1">
       <Layout style={styles.mapContainer}>
-        <Map avatar_url={avatar_url} coords={coords} />
+        <Map avatar_url={avatarUrl} coords={coords} />
       </Layout>
       <Divider />
       <Layout style={styles.dateContainer}>

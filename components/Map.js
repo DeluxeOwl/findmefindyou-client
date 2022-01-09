@@ -12,6 +12,7 @@ export default function Map({ avatar_url, coords }) {
   const isDataLoaded = true;
   console.log("coords");
   console.log(coords);
+  console.log(avatar_url);
 
   const [markers, setMarkers] = React.useState([]);
   const [polylineCoords, setPolylineCoords] = React.useState([]);
@@ -77,14 +78,12 @@ export default function Map({ avatar_url, coords }) {
                   latitude: marker.latlng.latitude,
                   longitude: marker.latlng.longitude,
                 }}
-                title={marker.title}
+                title={marker.ts.slice(0, -4)}
                 // image={{ uri: "./assets/trading_capybara" }}
               >
                 <Image
                   source={{
-                    uri:
-                      avatar_url ||
-                      "https://akveo.github.io/react-native-ui-kitten/docs/assets/playground-build/static/media/icon.a78e4b51.png",
+                    uri: avatar_url,
                   }}
                   style={{ height: 35, width: 35, borderRadius: 10 }}
                 />
