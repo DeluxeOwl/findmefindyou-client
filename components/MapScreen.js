@@ -22,7 +22,10 @@ export default function MapScreen({ route, navigation }) {
   const { display_name, avatar_url } = route.params;
   const [uniqueKey, myName] = credStore((s) => [s.uniqueKey, s.displayName]);
   const [avatarUrl, setAvatarUrl] = React.useState(avatar_url);
-  const [range, setRange] = React.useState({ startDate: now, endDate: null });
+  const [range, setRange] = React.useState({
+    startDate: oneWeekAgo,
+    endDate: null,
+  });
   const [coords, setCoords] = React.useState([]);
   // Format the date to our standard.
   React.useEffect(() => {
@@ -57,7 +60,6 @@ export default function MapScreen({ route, navigation }) {
           },
         }).then((res) => res.json());
         let friend = res.find((e) => e.display_name == display_name);
-        console.log("friend", friend);
         setAvatarUrl(`${env.BACKEND_URL}/${friend.avatar_url}`);
       };
       getFriendUrl();

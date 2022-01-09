@@ -10,9 +10,6 @@ const LONGITUDE_DELTA = 0.0421;
 export default function Map({ avatar_url, coords }) {
   // TODO: remove this, should show loading screen when fetching data
   const isDataLoaded = true;
-  console.log("coords");
-  console.log(coords);
-  console.log(avatar_url);
 
   const [markers, setMarkers] = React.useState([]);
   const [polylineCoords, setPolylineCoords] = React.useState([]);
@@ -21,8 +18,6 @@ export default function Map({ avatar_url, coords }) {
     longitude: LONGITUDE_FALLBACK,
   });
   React.useEffect(() => {
-    console.log("coords in useeffect");
-    console.log(coords);
     setMarkers(
       coords.map((c) => {
         return {
@@ -49,11 +44,6 @@ export default function Map({ avatar_url, coords }) {
         longitude: coords[0].longitude,
       });
     }
-
-    console.log("markers");
-    console.log(markers);
-    console.log(polylineCoords);
-    console.log(initialRegion);
   }, [coords]);
 
   return (
