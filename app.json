@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "findmefindyou-client",
-    "slug": "findmefindyou-client",
+    "name": "findmefindyou",
+    "slug": "findmefindyou",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/allseeingphone.jpg",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
