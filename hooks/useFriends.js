@@ -13,7 +13,9 @@ const friendsEndpoint = `${env.BACKEND_URL}/friends`;
 export default function useFriends() {
   const { mutate } = useSWRConfig();
   const uniqueKey = credStore((s) => s.uniqueKey);
-  const { data, error } = useSWR([friendsEndpoint, uniqueKey], fetcher);
+  const { data, error } = useSWR([friendsEndpoint, uniqueKey], fetcher, {
+    refreshInterval: 10000,
+  });
 
   return {
     friends: data,

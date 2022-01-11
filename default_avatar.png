@@ -1,0 +1,11 @@
+--2022-01-11 17:10:46--  https://cdn.discordapp.com/attachments/695293722967146497/930508754997370910/default_avatar.png
+Resolving cdn.discordapp.com (cdn.discordapp.com)... 162.159.134.233, 162.159.133.233, 162.159.135.233, ...
+Connecting to cdn.discordapp.com (cdn.discordapp.com)|162.159.134.233|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 28134 (27K) [image/png]
+Saving to: ‘default_avatar.png.1’
+
+     0K .......... .......... .......                         100%  119M=0s
+
+2022-01-11 17:10:47 (119 MB/s) - ‘default_avatar.png.1’ saved [28134/28134]
+
