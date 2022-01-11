@@ -9,14 +9,17 @@ import {
 import React from "react";
 import { StyleSheet } from "react-native";
 import showToast from "../util/showToast";
+import env from "../env";
+import { credStore } from "../stores/credStore";
 
 export default function AddUserID() {
+  const uniqueKey = credStore((s) => s.uniqueKey);
   // The value of the user id
   const [value, setValue] = React.useState("");
   // State of the modal
   const [visible, setVisible] = React.useState(false);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (value.length < 10) {
       showToast({
         topText: "Error",
@@ -24,6 +27,17 @@ export default function AddUserID() {
         bottomText: `User id is too short`,
       });
     } else {
+      await fetch(`${env.BACKEND_URL}/send_friend_req`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Key": uniqueKey,
+        },
+        body: JSON.stringify({
+          friend_name: value,
+        }),
+      });
+
       showToast({
         topText: "Info",
         type: "info",

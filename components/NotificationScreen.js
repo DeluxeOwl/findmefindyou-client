@@ -1,7 +1,7 @@
 import { Divider, Layout } from "@ui-kitten/components";
 import React from "react";
-import NotificationScreenWarning from "./NotificationScreenWarning";
 import NotificationList from "./NotificationList";
+import NotificationScreenWarning from "./NotificationScreenWarning";
 export default function NotificationScreen({ navigation }) {
   return (
     <Layout style={{ flex: 1 }} level="1">

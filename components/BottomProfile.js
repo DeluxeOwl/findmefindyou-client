@@ -21,26 +21,46 @@ import {
   View,
 } from "react-native";
 import shallow from "zustand/shallow";
+import env from "../env.js";
 import { credStore } from "../stores/credStore";
 import { db } from "../stores/database";
 import * as RootNavigation from "../util/RootNavigation";
 import showToast from "../util/showToast";
+import NotifNumberButton from "./NotifNumberButton.js";
 
 const SCREEN_HEIGHT = Dimensions.get("screen").height;
 const STATUS_BAR_HEIGHT = StatusBar.currentHeight;
 const WINDOW_HEIGHT = Dimensions.get("window").height;
 const BOTTOM_BAR_HEIGHT = SCREEN_HEIGHT - WINDOW_HEIGHT + STATUS_BAR_HEIGHT;
 
-export default function BottomProfile({ avatarUri, name, notifNumber }) {
+export default function BottomProfile({ name }) {
   // Last time synced
-  const [lastSync, setLastSync] = credStore(
-    (s) => [s.lastSync, s.setLastSync],
+  const [lastSync, setLastSync, uniqueKey] = credStore(
+    (s) => [s.lastSync, s.setLastSync, s.uniqueKey],
     shallow
   );
 
   // State of the modal for image upload
   const [visible, setVisible] = React.useState(false);
-  const [image, setImage] = React.useState(null);
+
+  const [avatarUri, setAvatarUri] = credStore((s) => [
+    s.avatarUri,
+    s.setAvatarUri,
+  ]);
+
+  React.useEffect(() => {
+    const fetchUrl = async () => {
+      const res = await fetch(`${env.BACKEND_URL}/avatar_location`, {
+        method: "GET",
+        headers: {
+          "X-Key": uniqueKey,
+        },
+      });
+      const data = await res.json();
+      setAvatarUri(`${env.BACKEND_URL}/${data["avatar_url"]}`);
+    };
+    fetchUrl().catch(console.log);
+  }, [visible]);
 
   // This use effect runs periodically and updates the 'last sync' status
   // it's a little bit finnicky ... make sure there is some data in the db
@@ -48,13 +68,14 @@ export default function BottomProfile({ avatarUri, name, notifNumber }) {
     // Needs plugin for relative time
     dayjs.extend(relativeTime);
 
+    // TODO: fix promise rejection at _array[0]
     const id = setInterval(() => {
       db.transaction((tx) => {
         tx.executeSql(
           `select timestamp from coordinates order by timestamp desc limit 1`,
           [],
           (_, { rows: { _array } }) =>
-            setLastSync(dayjs(_array[0]["timestamp"]).toNow(true))
+            setLastSync(dayjs(_array[0]?.timestamp).toNow(true))
         );
       });
     }, 30000);
@@ -64,10 +85,12 @@ export default function BottomProfile({ avatarUri, name, notifNumber }) {
     };
   }, []);
 
-  // We're using a reference to the react navigator to avoid
-  // some hook errors
-  const handleNav = () => {
-    RootNavigation.navigate("Notifications");
+  const handleSelfPress = () => {
+    RootNavigation.navigate("Map", {
+      display_name: name,
+      avatar_url: avatarUri,
+      headerTitle: `Your routes`,
+    });
   };
 
   // Asks for permission to use the camera
@@ -89,31 +112,54 @@ export default function BottomProfile({ avatarUri, name, notifNumber }) {
       }
     })();
   };
-  // TODO: consider encoding it as base64
+
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
       aspect: [3, 3],
-      quality: 0,
+      quality: 1,
     });
 
     if (!result.cancelled) {
       try {
         const manipResult = await manipulateAsync(
           result.uri,
-          [{ resize: { width: 100, height: 100 } }],
+          [{ resize: { width: 300, height: 300 } }],
           { compress: 1 }
         );
-        setImage(manipResult.uri);
+
+        console.log("Bottom profile, image ⟶ ", manipResult);
+        // Get the fileName, basically an uuid with the extension
+        const filename = manipResult.uri.split("/").pop();
+
+        // Infer the type of the image
+        const match = /\.(\w+)$/.exec(filename);
+        const type = match ? `image/${match[1]}` : `image`;
+
+        // Upload the image using the fetch and FormData APIs
+        let formData = new FormData();
+        // Assume "photo" is the name of the form field the server expects
+        formData.append("photo", {
+          uri: manipResult.uri,
+          name: filename,
+          type,
+        });
+
+        await fetch(`${env.BACKEND_URL}/upload_avatar`, {
+          method: "POST",
+          body: formData,
+          headers: {
+            "Content-Type": "multipart/form-data",
+            "X-Key": uniqueKey,
+          },
+        });
 
         showToast({
           type: "success",
           topText: "Success",
           bottomText: "Image uploaded successfully!",
         });
-
-        console.log(manipResult);
       } catch (error) {
         showToast({
           type: "error",
@@ -151,31 +197,23 @@ export default function BottomProfile({ avatarUri, name, notifNumber }) {
         <Pressable onPress={handleAvatarClick}>
           <Avatar
             source={{
-              uri: avatarUri,
+              uri:
+                avatarUri ||
+                "https://akveo.github.io/react-native-ui-kitten/docs/assets/playground-build/static/media/icon.a78e4b51.png",
             }}
           />
         </Pressable>
+
         <View style={styles.authoringInfoContainer}>
-          <Text>{name}</Text>
+          <Pressable onPress={handleSelfPress}>
+            <Text>{name}</Text>
+          </Pressable>
           <Text appearance="hint" category="p2">
             {`Last sync: ${lastSync} ago`}
           </Text>
         </View>
-        <Button
-          style={styles.iconButton}
-          appearance="ghost"
-          status="basic"
-          accessoryLeft={
-            <Icon
-              fill={(notifNumber !== 0 && "red") || "gray"}
-              stroke={(notifNumber !== 0 && "red") || "gray"}
-              name="bell-outline"
-            />
-          }
-          onPress={handleNav}
-        >
-          {notifNumber === 0 ? "" : `${notifNumber} new`}
-        </Button>
+
+        <NotifNumberButton />
       </View>
     </Layout>
   );

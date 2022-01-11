@@ -1,20 +1,46 @@
+import { Button, Icon } from "@ui-kitten/components";
 import React from "react";
-import { Icon, Button } from "@ui-kitten/components";
+import env from "../env";
+import { credStore } from "../stores/credStore";
 import showToast from "../util/showToast";
+import useFriends from "../hooks/useFriends";
+import usePendingFriends from "../hooks/usePendingFriends";
 
-// TODO: add more parameters, such as username
-export default function NotificationAcceptDeleteButtons({ requestID }) {
-  const handleAccept = () => {
+const handleAction = async (uniqueKey, action, display_name) =>
+  fetch(`${env.BACKEND_URL}/friend_req`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Key": uniqueKey,
+    },
+    body: JSON.stringify({
+      friend_name: display_name,
+      action: action,
+    }),
+  });
+
+// TODO: api calls to delete
+export default function NotificationAcceptDeleteButtons({ friendName }) {
+  const uniqueKey = credStore((s) => s.uniqueKey);
+  const { refetchFriends } = useFriends();
+  const { refetchPendingFriends } = usePendingFriends();
+
+  const handleAccept = async () => {
+    await handleAction(uniqueKey, "accept", friendName);
+    refetchFriends();
+    refetchPendingFriends();
     showToast({
       topText: "Success",
-      bottomText: `Accepted request from User ${requestID + 1}`,
+      bottomText: `Accepted request from ${friendName}`,
       type: "success",
     });
   };
-  const handleDecline = () => {
+  const handleDecline = async () => {
+    await handleAction(uniqueKey, "decline", friendName);
+    refetchPendingFriends();
     showToast({
       topText: "Declined",
-      bottomText: `Declined request from User ${requestID + 1}`,
+      bottomText: `Declined request from ${friendName}`,
       type: "error",
     });
   };

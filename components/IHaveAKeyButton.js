@@ -1,20 +1,37 @@
 import { Button, Card, Input, Modal } from "@ui-kitten/components";
 import React from "react";
 import { StyleSheet } from "react-native";
-
 import showToast from "../util/showToast";
-import env from "../env.js";
+import * as SecureStore from "expo-secure-store";
+import { credStore } from "../stores/credStore";
+import env from "../env";
 
 export default function IHaveAkeyButton({ text }) {
-  const [uniqueKey, setUniqueKey] = React.useState("");
+  const [uniqueKeyInput, setUniqueKeyInput] = React.useState("");
   // State of the modal
   const [visible, setVisible] = React.useState(false);
+  const fetchCreds = credStore((s) => s.fetchCreds);
 
-  // TODO: fetch displayname, store with key in secret store
-  // get the location data, store it in the db?
-  // redirect to home screen
-  // don't show this page again
   const handleAccountFetch = async () => {
+    const res = await fetch(`${env.BACKEND_URL}/recover_account`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        unique_key: uniqueKeyInput,
+      }),
+    });
+
+    const resJson = await res.json();
+
+    if (resJson.result !== "error") {
+      await SecureStore.setItemAsync("displayName", resJson.result);
+      await SecureStore.setItemAsync("uniqueKey", uniqueKeyInput);
+      await fetchCreds();
+      return;
+    }
+
     showToast({
       topText: "Error",
       type: "error",
@@ -45,8 +62,8 @@ export default function IHaveAkeyButton({ text }) {
             status="primary"
             placeholder="Secret key ..."
             label="Enter the secret key you wrote down"
-            value={uniqueKey}
-            onChangeText={setUniqueKey}
+            value={uniqueKeyInput}
+            onChangeText={setUniqueKeyInput}
           />
           <Button
             style={{ margin: 5 }}

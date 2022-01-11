@@ -1,12 +1,25 @@
-import { Divider, Layout } from "@ui-kitten/components";
+import { Button, Divider, Layout } from "@ui-kitten/components";
+import * as SecureStore from "expo-secure-store";
 import React from "react";
+import { credStore } from "../stores/credStore";
 import AddUserID from "./AddUserID";
 import BottomProfile from "./BottomProfile";
-import UserList from "./UserList";
 import SendDataToggle from "./SendDataToggle";
-import { credStore } from "../stores/credStore";
+import UserList from "./UserList";
+import * as RootNavigation from "../util/RootNavigation";
+
 export default function HomeScreen({ navigation }) {
-  const displayName = credStore((s) => s.displayName);
+  const [displayName, fetchCreds] = credStore((s) => [
+    s.displayName,
+    s.fetchCreds,
+  ]);
+
+  const deleteIDS = async () => {
+    await SecureStore.deleteItemAsync("displayName");
+    await SecureStore.deleteItemAsync("uniqueKey");
+    await fetchCreds();
+    RootNavigation.navigate("InitialScreen");
+  };
 
   return (
     <React.Fragment>
@@ -16,11 +29,8 @@ export default function HomeScreen({ navigation }) {
         <AddUserID />
         <SendDataToggle />
         <Divider />
-        <BottomProfile
-          avatarUri="https://akveo.github.io/react-native-ui-kitten/docs/assets/playground-build/static/media/icon.a78e4b51.png"
-          name={displayName}
-          notifNumber={1}
-        />
+        <BottomProfile name={displayName} />
+        <Button onPress={deleteIDS}>Delete account</Button>
       </Layout>
     </React.Fragment>
   );

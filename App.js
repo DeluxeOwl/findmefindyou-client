@@ -3,8 +3,6 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { ApplicationProvider, IconRegistry } from "@ui-kitten/components";
 import { EvaIconsPack } from "@ui-kitten/eva-icons";
-import dayjs from "dayjs";
-import * as SQLite from "expo-sqlite";
 import { StatusBar } from "expo-status-bar";
 import React from "react";
 import Toast from "react-native-toast-message";
@@ -14,62 +12,118 @@ import LoadingScreen from "./components/LoadingScreen";
 import MapScreen from "./components/MapScreen";
 import NotificationScreen from "./components/NotificationScreen";
 import { credStore } from "./stores/credStore";
+import { db } from "./stores/database";
 import { navigationRef } from "./util/RootNavigation";
 import toastConfig from "./util/toastConfig";
-// For navigation
+import env from "./env";
+import * as LocalAuthentication from "expo-local-authentication";
+
 const Stack = createNativeStackNavigator();
 
-import { db } from "./stores/database";
-
-// TODO: clear up comments
 export default function App() {
   const { displayName, uniqueKey, fetchCreds } = credStore();
-  // const [data, setData] = React.useState(null);
+  const [data, setData] = React.useState(null);
+
+  // React.useEffect(() => {
+  //   console.log("App.js ⟶ rerender: ", displayName, uniqueKey);
+  // });
 
   React.useEffect(() => {
-    console.log(displayName, uniqueKey);
-    // console.log(JSON.stringify(data, null, 2));
-  });
+    const fetchCredentials = async () => {
+      // Use this to delete the items from the store
+      await fetchCreds();
+    };
 
-  React.useEffect(async () => {
-    // Use this to delete the items from the store
-    // await SecureStore.deleteItemAsync("displayName");
-    // await SecureStore.deleteItemAsync("uniqueKey");
-    await fetchCreds();
+    fetchCredentials().catch(console.log);
+
     // Create the table
     db.transaction((tx) => {
       // tx.executeSql("drop table coordinates");
       tx.executeSql(`
       create table if not exists coordinates (
           timestamp text not null,
-          coord_x real not null,
-          coord_y real not null
+          latitude real not null,
+          longitude real not null
       );    
       `);
-      // Insert random values
-      // for (let i = 0; i < 4; i++) {
-      //   tx.executeSql(
-      //     `
-      //         insert into coordinates (timestamp, coord_x, coord_y)
-      //         values (?, ?, ?)
-      //         `,
-      //     [
-      //       dayjs().format("YYYY-MM-DD HH:mm:ss.SSS").toString(),
-      //       Number((Math.random() * 121 - 60).toFixed(7)),
-      //       Number((Math.random() * 121 - 60).toFixed(7)),
-      //     ]
-      //   );
-      // }
     });
-    // db.transaction((tx) => {
-    //   tx.executeSql(
-    //     `select * from coordinates;`,
-    //     [],
-    //     (_, { rows: { _array } }) => setData(_array)
-    //   );
-    // });
   }, []);
 
+  React.useEffect(() => {
+    const intervalID = setInterval(() => {
+      db.transaction((tx) => {
+        tx.executeSql(
+          `select * from coordinates order by ROWID desc LIMIT 5;`,
+          [],
+          (_, { rows: { _array } }) => setData(_array)
+        );
+      });
+    }, env.UPDATE_REMOTE_DB_INTERVAL_SECONDS * 1000);
+    return () => clearInterval(intervalID);
+  }, []);
+
+  React.useEffect(() => {
+    if (!data) {
+      return;
+    }
+
+    const coordBody = data.reverse().filter((item, pos, arr) => {
+      return (
+        pos === 0 ||
+        item.latitude !== arr[pos - 1].latitude ||
+        item.longitude !== arr[pos - 1].longitude
+      );
+    });
+    // the filter filters only be unique latitude and longitudes, no need to send
+    // these duplicates values
+
+    const postBody = async () => {
+      console.log(`sending coord data to backend ...\n`);
+      await fetch(`${env.BACKEND_URL}/upload_coords`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Key": uniqueKey,
+        },
+        body: JSON.stringify(coordBody),
+      });
+    };
+    postBody().catch(console.log);
+  }, [data]);
+
+  const [state, setState] = React.useState({
+    compatible: false,
+    fingerprints: false,
+    result: "",
+  });
+
+  checkDeviceForHardware = async () => {
+    let compatible = await LocalAuthentication.hasHardwareAsync();
+    setState({ ...state, compatible: compatible });
+  };
+
+  checkForFingerprints = async () => {
+    let fingerprints = await LocalAuthentication.isEnrolledAsync();
+    setState({ ...state, fingerprints: fingerprints });
+  };
+
+  scanFingerprint = async () => {
+    let result = await LocalAuthentication.authenticateAsync(
+      "Scan your finger."
+    );
+    console.log("Scan Result:", result);
+    setState({
+      ...state,
+      result: result,
+    });
+  };
+  React.useEffect(() => {
+    checkDeviceForHardware().then(checkForFingerprints).then(scanFingerprint);
+  }, []);
+
+  if (!state?.result?.success) {
+    return null;
+  }
   return (
     <React.Fragment>
       <StatusBar style="auto" />

@@ -1,10 +1,10 @@
 import { Button, Card, Modal, Text } from "@ui-kitten/components";
+import * as SecureStore from "expo-secure-store";
 import React from "react";
 import { StyleSheet } from "react-native";
 import env from "../env.js";
-import showToast from "../util/showToast";
-import * as SecureStore from "expo-secure-store";
 import { credStore } from "../stores/credStore";
+import showToast from "../util/showToast";
 
 export default function GenerateAccountButton({ text }) {
   const [uniqueKey, setUniqueKey] = React.useState("");
@@ -15,19 +15,22 @@ export default function GenerateAccountButton({ text }) {
   const fetchCreds = credStore((s) => s.fetchCreds);
 
   // Fetch the credentials on component mount
-  React.useEffect(async () => {
-    try {
-      const creds = await fetch(`${env.BACKEND_URL}/init`);
-      const { display_name, unique_key } = await creds.json();
-      setDisplayName(display_name);
-      setUniqueKey(unique_key);
-    } catch (e) {
-      showToast({
-        type: "error",
-        topText: "Error",
-        bottomText: "Please restart the app",
-      });
-    }
+  React.useEffect(() => {
+    const fetchInitCreds = async () => {
+      try {
+        const creds = await fetch(`${env.BACKEND_URL}/init`);
+        const { display_name, unique_key } = await creds.json();
+        setDisplayName(display_name);
+        setUniqueKey(unique_key);
+      } catch (e) {
+        showToast({
+          type: "error",
+          topText: "Error",
+          bottomText: "Please restart the app",
+        });
+      }
+    };
+    fetchInitCreds().catch(console.log);
   }, []);
 
   const handleAccountCreation = async () => {
@@ -35,13 +38,25 @@ export default function GenerateAccountButton({ text }) {
       return;
     }
 
-    // TODO: send request to backend
+    try {
+      await fetch(`${env.BACKEND_URL}/create_account`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          display_name: displayName,
+          unique_key: uniqueKey,
+        }), // body data type must match "Content-Type" header
+      });
+      // Set the items in the secure store
+      await SecureStore.setItemAsync("displayName", displayName);
+      await SecureStore.setItemAsync("uniqueKey", uniqueKey);
 
-    // Set the items in the secure store
-    await SecureStore.setItemAsync("displayName", displayName);
-    await SecureStore.setItemAsync("uniqueKey", uniqueKey);
-
-    await fetchCreds();
+      await fetchCreds();
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
